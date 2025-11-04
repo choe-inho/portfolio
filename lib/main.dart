@@ -1,0 +1,90 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:portfolio/Portfolio.dart';
+import 'firebase_options.dart';
+import 'Error_Fall_Back_Web.dart';
+
+void main() async{
+  try{
+    WidgetsFlutterBinding.ensureInitialized();
+    await _initializeWeb();
+    runApp(const Portfolio());
+  }catch(e, stackTrace){
+    debugPrint('❌ [Main] 앱 초기화 실패: $e');
+    runApp(const ErrorFallBackWeb());
+  }
+}
+
+
+///초기화 정의 클래스
+class InitStep{
+  final String name;
+  final Future<void> Function() function;
+  const InitStep(this.name, this.function);
+}
+
+Future<void> _initializeWeb() async{
+  try{
+    debugPrint('🚀 [Main] 포트폴리오 초기화 시작...');
+
+    final steps = [
+      InitStep('웹 세로모드 고정', _initializeWebSettings),
+      InitStep('파이어베이스 초기화', _initializeFirebase),
+      InitStep('환경변수 초기화', _initializeEnv)
+    ];
+
+    for (final step in steps) {
+      debugPrint('⏳ [Main] ${step.name} 중...');
+      await step.function();
+      debugPrint('✅ [Main] ${step.name} 완료');
+    }
+  }catch(e){
+    debugPrint('❌ [Main] 초기화 실패: $e');
+    rethrow;
+  }
+}
+
+//파이어베이스 초기화
+Future<void> _initializeFirebase() async{
+  try{
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform
+    );
+
+    debugPrint('✅ [Main] 파이어베이스 초기화 완료');
+  } catch (e) {
+    debugPrint('⚠️ [Main] 파이어베이스 초기화 실패 (무시됨): $e');
+  }
+}
+
+//환경변수 초기화
+Future<void> _initializeEnv() async{
+  try{
+    await dotenv.load(fileName: '.env');
+    debugPrint('✅ [Main] 환경변수 초기화 완료');
+  } catch (e) {
+    debugPrint('⚠️ [Main] 환경변수 초기화 실패 (무시됨): $e');
+  }
+}
+
+//웹 기본 설정 초기화
+Future<void> _initializeWebSettings() async{
+  try{
+    // 시스템 UI 기본 설정
+    await SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.edgeToEdge,
+    );
+
+    // 화면 방향 고정 (세로 모드)
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
+    debugPrint('✅ [Main] 기본 설정 초기화 완료');
+  } catch (e) {
+    debugPrint('⚠️ [Main] 기본 설정 초기화 실패 (무시됨): $e');
+  }
+}
