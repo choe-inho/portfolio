@@ -2,7 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 import 'package:portfolio/Portfolio.dart';
+import 'package:portfolio/controller/App_Controller.dart';
 import 'firebase_options.dart';
 import 'Error_Fall_Back_Web.dart';
 
@@ -10,9 +12,14 @@ void main() async{
   try{
     WidgetsFlutterBinding.ensureInitialized();
     await _initializeWeb();
+
+    // GetX 컨트롤러 초기화
+    _initializeControllers();
+
     runApp(const Portfolio());
   }catch(e, stackTrace){
     debugPrint('❌ [Main] 앱 초기화 실패: $e');
+    debugPrint('Stack trace: $stackTrace');
     runApp(const ErrorFallBackWeb());
   }
 }
@@ -44,6 +51,16 @@ Future<void> _initializeWeb() async{
     debugPrint('❌ [Main] 초기화 실패: $e');
     rethrow;
   }
+}
+
+/// GetX 컨트롤러 초기화
+void _initializeControllers() {
+  debugPrint('🎮 [Main] GetX 컨트롤러 초기화 시작...');
+
+  // AppController를 영구적으로 등록 (앱 전체에서 사용)
+  Get.put(AppController(), permanent: true);
+
+  debugPrint('✅ [Main] GetX 컨트롤러 초기화 완료');
 }
 
 //파이어베이스 초기화

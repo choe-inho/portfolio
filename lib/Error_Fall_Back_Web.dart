@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:portfolio/util/constants/App_Constants.dart';
+import 'package:portfolio/util/config//App_Constants.dart';
 import 'package:portfolio/util/theme/App_Theme.dart';
 
 class ErrorFallBackWeb extends StatelessWidget {
