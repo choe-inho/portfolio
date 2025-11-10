@@ -1,7 +1,7 @@
 class Skill{
   final String name;
-  final double proficiency;
-  final String color;
+  final int proficiency;
+  final int color;
   final String icon;
 
   Skill({
