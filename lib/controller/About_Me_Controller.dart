@@ -10,9 +10,6 @@ class AboutMeController extends GetxController{
   RxBool aboutMeFetching = false.obs;
   AboutMe? aboutMe;
 
-  RxBool skillFetching = false.obs;
-  List<Skill>? skills;
-
   RxBool contactFetching = false.obs;
   Contact? contact;
 
@@ -49,16 +46,4 @@ class AboutMeController extends GetxController{
     }
   }
 
-
-  //스킬은 hero가 아닌 패이지 진입할때 이중 패치 방지
-  Future<void> fetchSkills() async{
-    try{
-      if(!skillFetching.value){
-
-        skillFetching.value = true;
-      }
-    }catch(e){
-      debugPrint('[AboutMe Controller] 스킬 패치 실패함: $e');
-    }
-  }
 }

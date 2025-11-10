@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
+import '../../util/route/App_Routes.dart';
 import '../common/Portfoil_Footer.dart';
 import '../common/Portfolio_Navigation_Bar.dart' as nav;
 import '../common/Quick_Navigation_Cards.dart';
@@ -17,6 +19,18 @@ class _HeroPageState extends State<HeroPage> {
   final ScrollController _scrollController = ScrollController();
 
   @override
+  void initState() {
+    super.initState();
+    // 현재 라우트에 따라 네비게이션 인덱스 설정
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final currentRoute = Get.currentRoute;
+      setState(() {
+        _currentNavIndex = AppRoutes.getIndexByRoute(currentRoute);
+      });
+    });
+  }
+
+  @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
@@ -27,18 +41,21 @@ class _HeroPageState extends State<HeroPage> {
       _currentNavIndex = index;
     });
 
-    // TODO: 각 섹션으로 스크롤 또는 페이지 이동
-    debugPrint('Navigation item selected: $index');
+    // GetX를 이용한 페이지 이동
+    final route = AppRoutes.getRouteByIndex(index);
+
+    // 이미 해당 페이지에 있다면 이동하지 않음
+    if (Get.currentRoute != route) {
+      Get.toNamed(route);
+    }
   }
 
   void _handleViewProjects() {
-    // TODO: Projects 섹션으로 이동
-    _handleNavigationItemSelected(3);
+    _handleNavigationItemSelected(3); // Projects 페이지로 이동
   }
 
   void _handleContact() {
-    // TODO: Contact 섹션으로 이동
-    _handleNavigationItemSelected(4);
+    _handleNavigationItemSelected(4); // Contact 페이지로 이동
   }
 
   @override

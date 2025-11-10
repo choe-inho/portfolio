@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:portfolio/controller/App_Controller.dart';
-import 'package:portfolio/screen/hero/Hero_Page.dart';
+import 'package:portfolio/util/route/App_Routes.dart';
 import 'package:portfolio/util/theme/App_Theme.dart';
 
 class Portfolio extends StatelessWidget {
@@ -18,9 +18,13 @@ class Portfolio extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: ThemeMode.system,
-          home: const ResponsiveWrapper(
-            child: HeroPage(),
-          ),
+          // GetX 라우팅 설정
+          initialRoute: AppRoutes.home,
+          getPages: AppRoutes.routes,
+          // home은 initialRoute와 함께 사용할 수 없으므로 제거
+          // home: const ResponsiveWrapper(
+          //   child: HeroPage(),
+          // ),
         );
       },
     );
