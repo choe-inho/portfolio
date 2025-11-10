@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 import '../common/Portfoil_Footer.dart';
-import '../common/Portfolio_Navigation_Bar.dart';
+import '../common/Portfolio_Navigation_Bar.dart' as nav;
 import '../common/Quick_Navigation_Cards.dart';
 import 'Hero_Section.dart';
 
@@ -48,10 +48,15 @@ class _HeroPageState extends State<HeroPage> {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
+      // Drawer 추가
+      endDrawer: nav.NavigationDrawer(
+        currentIndex: _currentNavIndex,
+        onItemSelected: _handleNavigationItemSelected,
+      ),
       body: Column(
         children: [
           // 네비게이션 바 (고정)
-          PortfolioNavigationBar(
+          nav.PortfolioNavigationBar(
             currentIndex: _currentNavIndex,
             onItemSelected: _handleNavigationItemSelected,
           ),

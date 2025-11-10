@@ -18,8 +18,6 @@ class PortfolioNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appController = Get.find<AppController>();
-    final constants = AppConstants.of(context);
-    final theme = Theme.of(context);
 
     return Obx(() {
       if (appController.isMobile) {
@@ -51,7 +49,6 @@ class _DesktopNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final constants = AppConstants.of(context);
     final theme = Theme.of(context);
-    final appController = Get.find<AppController>();
 
     return Container(
       height: constants.appBarHeight(context),
@@ -131,7 +128,7 @@ class _MobileNavigationBar extends StatelessWidget {
 
           SizedBox(width: constants.spacingS),
 
-          // 햄버거 메뉴
+          // 햄버거 메뉴 (Drawer)
           _MobileMenuButton(
             currentIndex: currentIndex,
             onItemSelected: onItemSelected,
@@ -154,7 +151,11 @@ class _LogoSection extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.asset('assets/icon/icon_only_logo.png', height: constants.iconSize(context), width: constants.iconSize(context),),
+        Image.asset(
+          'assets/icon/icon_only_logo.png',
+          height: constants.iconSize(context),
+          width: constants.iconSize(context),
+        ),
         SizedBox(width: constants.spacingS),
         Text(
           'ICONODING',
@@ -284,7 +285,6 @@ class _ThemeToggleButton extends StatelessWidget {
       ),
       color: theme.colorScheme.onSurface,
       onPressed: () {
-        // TODO: 다크모드 토글 구현
         Get.changeThemeMode(
           isDark ? ThemeMode.light : ThemeMode.dark,
         );
@@ -293,7 +293,7 @@ class _ThemeToggleButton extends StatelessWidget {
   }
 }
 
-/// 모바일 메뉴 버튼
+/// 모바일 메뉴 버튼 (Drawer)
 class _MobileMenuButton extends StatelessWidget {
   final Function(int)? onItemSelected;
   final int currentIndex;
@@ -331,76 +331,77 @@ class _MobileMenuButton extends StatelessWidget {
       ),
       color: theme.colorScheme.onSurface,
       onPressed: () {
-        showModalBottomSheet(
-          context: context,
-          backgroundColor: theme.colorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(constants.largeBorderRadius(context)),
-            ),
-          ),
-          builder: (context) => _MobileMenuSheet(
-            currentIndex: currentIndex,
-            onItemSelected: (index) {
-              Navigator.pop(context);
-              onItemSelected?.call(index);
-            },
-            menuItems: _menuItems,
-            menuIcons: _menuIcons,
-          ),
-        );
+        Scaffold.of(context).openEndDrawer();
       },
     );
   }
 }
 
-/// 모바일 메뉴 시트
-class _MobileMenuSheet extends StatelessWidget {
-  final Function(int) onItemSelected;
+/// Navigation Drawer (모바일)
+class NavigationDrawer extends StatelessWidget {
+  final Function(int)? onItemSelected;
   final int currentIndex;
-  final List<String> menuItems;
-  final List<IconData> menuIcons;
 
-  const _MobileMenuSheet({
-    required this.onItemSelected,
+  const NavigationDrawer({
+    super.key,
     required this.currentIndex,
-    required this.menuItems,
-    required this.menuIcons,
+    this.onItemSelected,
   });
+
+  static const List<String> _menuItems = [
+    'Home',
+    'About Me',
+    'Skills',
+    'Projects',
+    'Contact',
+  ];
+
+  static const List<IconData> _menuIcons = [
+    LucideIcons.home,
+    LucideIcons.user,
+    LucideIcons.code,
+    LucideIcons.briefcase,
+    LucideIcons.mail,
+  ];
 
   @override
   Widget build(BuildContext context) {
     final constants = AppConstants.of(context);
     final theme = Theme.of(context);
 
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.all(constants.spacingL),
+    return Drawer(
+      backgroundColor: theme.colorScheme.surface,
+      child: SafeArea(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            // 핸들
-            Container(
-              width: 40.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.outline,
-                borderRadius: BorderRadius.circular(2.r),
-              ),
-            ),
+            // Drawer 헤더
+            _DrawerHeader(),
+
             SizedBox(height: constants.spacingL),
 
             // 메뉴 아이템들
-            ...List.generate(menuItems.length, (index) {
-              return _MobileMenuSheetItem(
-                icon: menuIcons[index],
-                label: menuItems[index],
-                isSelected: currentIndex == index,
-                onTap: () => onItemSelected(index),
-              );
-            }),
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.symmetric(
+                  horizontal: constants.spacingM,
+                ),
+                itemCount: _menuItems.length,
+                itemBuilder: (context, index) {
+                  return _DrawerMenuItem(
+                    icon: _menuIcons[index],
+                    label: _menuItems[index],
+                    isSelected: currentIndex == index,
+                    onTap: () {
+                      Navigator.pop(context);
+                      onItemSelected?.call(index);
+                    },
+                  );
+                },
+              ),
+            ),
 
-            SizedBox(height: constants.spacingM),
+            // Footer
+            _DrawerFooter(),
           ],
         ),
       ),
@@ -408,14 +409,54 @@ class _MobileMenuSheet extends StatelessWidget {
   }
 }
 
-/// 모바일 메뉴 시트 아이템
-class _MobileMenuSheetItem extends StatelessWidget {
+/// Drawer 헤더
+class _DrawerHeader extends StatelessWidget {
+  const _DrawerHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final constants = AppConstants.of(context);
+
+    return Container(
+      padding: EdgeInsets.all(constants.spacingL),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
+            width: 1,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          Image.asset(
+            'assets/icon/icon_only_logo.png',
+            height: 32.r,
+            width: 32.r,
+          ),
+          SizedBox(width: constants.spacingM),
+          Text(
+            'ICONODING',
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Drawer 메뉴 아이템
+class _DrawerMenuItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _MobileMenuSheetItem({
+  const _DrawerMenuItem({
     required this.icon,
     required this.label,
     required this.isSelected,
@@ -465,6 +506,46 @@ class _MobileMenuSheetItem extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Drawer Footer
+class _DrawerFooter extends StatelessWidget {
+  const _DrawerFooter();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final constants = AppConstants.of(context);
+
+    return Container(
+      padding: EdgeInsets.all(constants.spacingL),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
+            width: 1,
+          ),
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            '© 2025 Portfolio',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+          ),
+          SizedBox(height: constants.spacingXS),
+          Text(
+            'Made with Flutter 💚',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:portfolio/controller/App_Controller.dart';
 import 'package:portfolio/screen/common/Hero_Image.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
+import 'package:portfolio/util/config/Skills_Config.dart';
 
 class HeroSection extends StatelessWidget {
   final VoidCallback? onViewProjects;
@@ -55,24 +56,33 @@ class _DesktopHeroSection extends StatelessWidget {
         horizontal: constants.horizontalPadding(context),
         vertical: constants.spacingXXL * 2,
       ),
-      child: Row(
+      child: Column(
         children: [
-          // 왼쪽: 텍스트 콘텐츠
-          Expanded(
-            flex: 3,
-            child: _HeroTextContent(
-              onViewProjects: onViewProjects,
-              onContact: onContact,
-            ),
+          Row(
+            children: [
+              // 왼쪽: 텍스트 콘텐츠
+              Expanded(
+                flex: 3,
+                child: _HeroTextContent(
+                  onViewProjects: onViewProjects,
+                  onContact: onContact,
+                ),
+              ),
+
+              SizedBox(width: constants.spacingXXL),
+
+              // 오른쪽: 이미지/일러스트
+              Expanded(
+                flex: 2,
+                child: HeroImage(),
+              ),
+            ],
           ),
 
-          SizedBox(width: constants.spacingXXL),
+          SizedBox(height: constants.spacingXXL * 2),
 
-          // 오른쪽: 이미지/일러스트
-          Expanded(
-            flex: 2,
-            child: HeroImage(),
-          ),
+          // Skills Section
+          _SkillsSection(),
         ],
       ),
     );
@@ -109,6 +119,11 @@ class _MobileHeroSection extends StatelessWidget {
             onViewProjects: onViewProjects,
             onContact: onContact,
           ),
+
+          SizedBox(height: constants.spacingXXL),
+
+          // Skills Section
+          _SkillsSection(),
 
           SizedBox(height: constants.spacingXL),
         ],
@@ -371,6 +386,240 @@ class _SecondaryButtonState extends State<_SecondaryButton> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Skills Section
+class _SkillsSection extends StatelessWidget {
+  const _SkillsSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final constants = AppConstants.of(context);
+
+    return Column(
+      children: [
+        // 섹션 타이틀
+        Text(
+          'Tech Stack',
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: theme.colorScheme.onSurface,
+          ),
+        ),
+
+        SizedBox(height: constants.spacingL),
+
+        // Skills 가로 스크롤
+        _SkillsHorizontalList(),
+      ],
+    );
+  }
+}
+
+/// Skills 가로 스크롤 리스트
+class _SkillsHorizontalList extends StatelessWidget {
+  const _SkillsHorizontalList();
+
+  @override
+  Widget build(BuildContext context) {
+    final constants = AppConstants.of(context);
+    final skills = SkillsConfig.skills;
+
+    return Center(
+      child: Wrap(
+        spacing: constants.spacingM,
+        runSpacing: constants.spacingM,
+        alignment: WrapAlignment.center,
+        children: skills.map((skill) {
+          return _SkillCard(
+            name: skill.name,
+            icon: skill.icon,
+            color: Color(skill.color),
+            proficiency: skill.proficiency,
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+/// Skill 카드
+class _SkillCard extends StatefulWidget {
+  final String name;
+  final String icon;
+  final Color color;
+  final int proficiency;
+
+  const _SkillCard({
+    required this.name,
+    required this.icon,
+    required this.color,
+    required this.proficiency,
+  });
+
+  @override
+  State<_SkillCard> createState() => _SkillCardState();
+}
+
+class _SkillCardState extends State<_SkillCard>
+    with SingleTickerProviderStateMixin {
+  bool _isHovered = false;
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.08).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _onHoverChanged(bool isHovered) {
+    setState(() => _isHovered = isHovered);
+    if (isHovered) {
+      _animationController.forward();
+    } else {
+      _animationController.reverse();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final constants = AppConstants.of(context);
+
+    return MouseRegion(
+      onEnter: (_) => _onHoverChanged(true),
+      onExit: (_) => _onHoverChanged(false),
+      cursor: SystemMouseCursors.click,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: AnimatedContainer(
+          duration: constants.fastAnimation,
+          width: 120.w,
+          padding: EdgeInsets.all(constants.spacingM),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(
+              constants.borderRadius(context),
+            ),
+            border: Border.all(
+              color: _isHovered
+                  ? widget.color.withValues(alpha: 0.6)
+                  : theme.colorScheme.outline.withValues(alpha: 0.2),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: _isHovered
+                    ? widget.color.withValues(alpha: 0.2)
+                    : Colors.black.withValues(alpha: 0.05),
+                blurRadius: _isHovered ? 16 : 8,
+                offset: Offset(0, _isHovered ? 6 : 3),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 아이콘
+              Container(
+                width: 48.r,
+                height: 48.r,
+                decoration: BoxDecoration(
+                  color: _isHovered
+                      ? widget.color.withValues(alpha: 0.15)
+                      : widget.color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(
+                    constants.smallBorderRadius(context),
+                  ),
+                ),
+                child: Center(
+                  child: Image.asset(
+                    widget.icon,
+                    width: 32.r,
+                    height: 32.r,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+
+              SizedBox(height: constants.spacingS),
+
+              // 이름
+              Text(
+                widget.name,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+
+              SizedBox(height: constants.spacingXS),
+
+              // Proficiency (숙련도 표시)
+              _ProficiencyIndicator(
+                proficiency: widget.proficiency,
+                color: widget.color,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 숙련도 표시 위젯
+class _ProficiencyIndicator extends StatelessWidget {
+  final int proficiency;
+  final Color color;
+
+  const _ProficiencyIndicator({
+    required this.proficiency,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final constants = AppConstants.of(context);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(3, (index) {
+        final isActive = index < proficiency;
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 2.w),
+          child: Container(
+            width: 6.w,
+            height: 6.h,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isActive
+                  ? color
+                  : color.withValues(alpha: 0.2),
+            ),
+          ),
+        );
+      }),
     );
   }
 }
