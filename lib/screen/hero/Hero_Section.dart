@@ -232,7 +232,7 @@ class _SubTitle extends StatelessWidget {
     final appController = Get.find<AppController>();
 
     return Text(
-      '사용자 경험을 최우선으로 생각하며, 아름답고 효율적인 앱을 만듭니다.\n'
+      '사용자 경험을 최우선으로 생각하며, 깔끔하고 효율적인 앱을 만듭니다.\n'
           '새로운 기술을 배우는 것을 즐기고, 문제 해결에 열정을 가지고 있습니다.',
       textAlign: appController.isMobile ? TextAlign.center : TextAlign.start,
       style: theme.textTheme.bodyLarge?.copyWith(
