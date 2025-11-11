@@ -8,6 +8,8 @@ import 'package:portfolio/util/animation/Portfolio_Animation.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../../util/animation/Portfolio_Indicator.dart';
+
 class AboutMeProfileSection extends StatelessWidget {
   final AboutMe aboutMe;
 
@@ -145,7 +147,6 @@ class _ProfileImageState extends State<_ProfileImage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final constants = AppConstants.of(context);
     final appController = Get.find<AppController>();
 
     final imageSize = appController.responsive(
@@ -184,20 +185,21 @@ class _ProfileImageState extends State<_ProfileImage>
   }
 }
 
-/// 이미지 로딩 플레이스홀더
+/// 이미지 로딩 플레이스홀더 - Coding Animation 인디케이터 사용
 class _ImagePlaceholder extends StatelessWidget {
   const _ImagePlaceholder();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final constants = AppConstants.of(context);
 
     return Container(
       color: theme.colorScheme.surfaceVariant,
       child: Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          color: theme.colorScheme.primary,
+        child: PortfolioLoadingIndicator(
+          style: IndicatorStyle.codingAnimation,
+          size: constants.smallIndicatorSize(context),
         ),
       ),
     );

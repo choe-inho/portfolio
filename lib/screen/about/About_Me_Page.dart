@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:portfolio/controller/About_Me_Controller.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
+import '../../util/animation/Portfolio_Indicator.dart';
 import '../../util/route/App_Routes.dart';
 import '../common/Portfoil_Footer.dart';
 import '../common/Portfolio_Navigation_Bar.dart' as nav;
@@ -138,7 +139,7 @@ class _AboutMePageState extends State<AboutMePage> {
   }
 }
 
-/// 로딩 상태
+/// 로딩 상태 - Coding Animation 인디케이터 사용
 class _LoadingState extends StatelessWidget {
   const _LoadingState();
 
@@ -151,15 +152,14 @@ class _LoadingState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
-            width: constants.defaultIndicatorSize(context),
-            height: constants.defaultIndicatorSize(context),
-            child: CircularProgressIndicator(
-              strokeWidth: 3,
-              color: theme.colorScheme.primary,
-            ),
+          // Coding Animation 인디케이터로 변경
+          PortfolioLoadingIndicator(
+            style: IndicatorStyle.codingAnimation,
+            size: constants.defaultIndicatorSize(context),
           ),
+
           SizedBox(height: constants.spacingL),
+
           Text(
             '프로필을 불러오는 중...',
             style: theme.textTheme.bodyLarge?.copyWith(
