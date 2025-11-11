@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:portfolio/controller/About_Me_Controller.dart';
 import 'package:portfolio/controller/App_Controller.dart';
+import 'package:portfolio/model/Time_Line.dart';
 import 'package:portfolio/util/animation/Portfolio_Animation.dart';
+import 'package:portfolio/util/animation/Portfolio_Indicator.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 
 class AboutMeTimelineSection extends StatelessWidget {
@@ -11,7 +14,7 @@ class AboutMeTimelineSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final aboutMeController = Get.find<AboutMeController>();
     final constants = AppConstants.of(context);
 
     return Container(
@@ -30,7 +33,13 @@ class AboutMeTimelineSection extends StatelessWidget {
           SizedBox(height: constants.spacingXL),
 
           // 타임라인
-          _Timeline(),
+          Obx(()=>
+            !aboutMeController.timelineFetching.value ?
+              PortfolioLoadingIndicator(
+                style: IndicatorStyle.bouncingBalls,
+              )
+            : _Timeline()
+          )
         ],
       ),
     );
@@ -82,45 +91,17 @@ class _SectionTitle extends StatelessWidget {
 
 /// 타임라인
 class _Timeline extends StatelessWidget {
-  const _Timeline();
-
-  // TODO: 실제 데이터는 Firestore에서 가져올 예정
-  static final List<Map<String, dynamic>> _timelineData = [
-    {
-      'type': 'education', // education or career
-      'title': '울산대학교',
-      'subtitle': '컴퓨터정보통신공학부',
-      'period': '2019.03 - 2025.02',
-      'description': '컴퓨터과학 전공, 학점 4.0/4.5',
-      'icon': LucideIcons.graduationCap,
-    },
-    {
-      'type': 'career',
-      'title': '프리랜서 개발자',
-      'subtitle': 'Flutter 앱 개발',
-      'period': '2023.01 - 2024.12',
-      'description': 'Flutter를 활용한 크로스플랫폼 앱 개발',
-      'icon': LucideIcons.briefcase,
-    },
-    {
-      'type': 'career',
-      'title': '스타트업 A',
-      'subtitle': 'Flutter 개발자',
-      'period': '2024.01 - 현재',
-      'description': '사내 앱 서비스 개발 및 유지보수',
-      'icon': LucideIcons.building,
-    },
-  ];
-
+  const _Timeline({required this.timeline});
+  final List<TimeLine> timeline;
   @override
   Widget build(BuildContext context) {
     final appController = Get.find<AppController>();
 
     return Obx(() {
       if (appController.isMobile) {
-        return _MobileTimeline(data: _timelineData);
+        return _MobileTimeline(data: timeline);
       } else {
-        return _DesktopTimeline(data: _timelineData);
+        return _DesktopTimeline(data: timeline);
       }
     });
   }
@@ -165,7 +146,7 @@ class _DesktopTimeline extends StatelessWidget {
 
 /// 모바일 타임라인
 class _MobileTimeline extends StatelessWidget {
-  final List<Map<String, dynamic>> data;
+  final List<TimeLine> data;
 
   const _MobileTimeline({required this.data});
 
@@ -174,12 +155,8 @@ class _MobileTimeline extends StatelessWidget {
     final constants = AppConstants.of(context);
 
     return Column(
-      children: data.asMap().entries.map((entry) {
-        final index = entry.key;
-        final item = entry.value;
-
+      children: data.map((entry) {
         return SlideInAnimation(
-          delay: Duration(milliseconds: 500 + (index * 150)),
           child: Padding(
             padding: EdgeInsets.only(
               bottom: index < data.length - 1 ? constants.spacingL : 0,

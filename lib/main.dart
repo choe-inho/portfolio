@@ -58,9 +58,18 @@ void _initializeControllers() {
   debugPrint('🎮 [Main] GetX 컨트롤러 초기화 시작...');
 
   // AppController를 영구적으로 등록 (앱 전체에서 사용)
+  // permanent: true로 설정하여 앱이 종료될 때까지 유지
   Get.put(AppController(), permanent: true);
 
   debugPrint('✅ [Main] GetX 컨트롤러 초기화 완료');
+
+  // AppController 초기화 확인
+  try {
+    final appController = Get.find<AppController>();
+    debugPrint('✅ [Main] AppController 확인 완료 - device: ${appController.device.value}');
+  } catch (e) {
+    debugPrint('⚠️ [Main] AppController 확인 실패: $e');
+  }
 }
 
 //파이어베이스 초기화

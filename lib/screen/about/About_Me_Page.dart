@@ -26,9 +26,8 @@ class _AboutMePageState extends State<AboutMePage> {
   @override
   void initState() {
     super.initState();
-    // AboutMeController 초기화
     _controller = Get.put(AboutMeController());
-
+    // AboutMeController 초기화
     // 현재 라우트에 따라 네비게이션 인덱스 설정
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentRoute = Get.currentRoute;
@@ -81,7 +80,7 @@ class _AboutMePageState extends State<AboutMePage> {
           Expanded(
             child: Obx(() {
               // 데이터 로딩 중
-              if (_controller.aboutMeFetching.value) {
+              if (!_controller.aboutMeFetching.value) {
                 return _LoadingState();
               }
 

@@ -45,11 +45,11 @@ dependencies:
 
   flutter_screenutil:
 
-  image_picker:
   cached_network_image:
 
   url_launcher:
 
+  intl:
 dev_dependencies:
   flutter_test:
     sdk: flutter

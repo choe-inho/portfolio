@@ -21,10 +21,12 @@ class Portfolio extends StatelessWidget {
           // GetX 라우팅 설정
           initialRoute: AppRoutes.home,
           getPages: AppRoutes.routes,
-          // home은 initialRoute와 함께 사용할 수 없으므로 제거
-          // home: const ResponsiveWrapper(
-          //   child: HeroPage(),
-          // ),
+          // IMPORTANT: ResponsiveWrapper로 각 페이지를 감싸야 함
+          builder: (context, widget) {
+            return ResponsiveWrapper(
+              child: widget ?? const SizedBox(),
+            );
+          },
         );
       },
     );
@@ -32,7 +34,7 @@ class Portfolio extends StatelessWidget {
 }
 
 /// 반응형 래퍼 - 화면 크기 변경을 감지하고 AppController에 전달
-class ResponsiveWrapper extends StatelessWidget {
+class ResponsiveWrapper extends StatefulWidget {
   final Widget child;
 
   const ResponsiveWrapper({
@@ -41,20 +43,41 @@ class ResponsiveWrapper extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final appController = Get.find<AppController>();
+  State<ResponsiveWrapper> createState() => _ResponsiveWrapperState();
+}
 
+class _ResponsiveWrapperState extends State<ResponsiveWrapper> {
+  @override
+  void initState() {
+    super.initState();
+    // AppController가 초기화되어 있는지 확인하고 없으면 생성
+    try {
+      Get.find<AppController>();
+    } catch (e) {
+      // AppController가 없으면 생성
+      Get.put(AppController(), permanent: true);
+      debugPrint('✅ [ResponsiveWrapper] AppController 초기화 완료');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         // 화면 크기가 변경될 때마다 AppController 업데이트
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          appController.updateScreenSize(
-            constraints.maxWidth,
-            constraints.maxHeight,
-          );
+          try {
+            final appController = Get.find<AppController>();
+            appController.updateScreenSize(
+              constraints.maxWidth,
+              constraints.maxHeight,
+            );
+          } catch (e) {
+            debugPrint('⚠️ [ResponsiveWrapper] AppController를 찾을 수 없음: $e');
+          }
         });
 
-        return child;
+        return widget.child;
       },
     );
   }
