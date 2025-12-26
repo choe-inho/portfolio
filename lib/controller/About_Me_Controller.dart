@@ -54,7 +54,7 @@ class AboutMeController extends GetxController{
         if(listData.isNotEmpty){
           debugPrint('[AboutMe Controller] 타임라인 불러오기 완료');
           timeLine = listData.map((e)=> TimeLine.fromJson(e.data())).toList();
-          timeLine!.sort((a,b)=> a.startDate.compareTo(b.startDate));
+          timeLine!.sort((a,b)=> b.startDate.compareTo(a.startDate));
           timelineFetching.value = true;
         }else{
           debugPrint('[AboutMe Controller] 타임라인 불러올 내용이 없어요');

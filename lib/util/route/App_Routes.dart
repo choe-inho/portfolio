@@ -1,9 +1,8 @@
-import 'package:flutter/src/widgets/basic.dart';
 import 'package:get/get.dart';
 import 'package:portfolio/controller/App_Controller.dart';
 import 'package:portfolio/screen/hero/Hero_Page.dart';
-
 import '../../screen/about/About_Me_Page.dart';
+import '../../screen/skill/Skills_Page.dart';
 
 class AppRoutes {
   // 라우트 이름 상수
@@ -18,9 +17,9 @@ class AppRoutes {
     GetPage(
       name: home,
       page: () => GetBuilder<AppController>(
-        builder: (controller) {
-          return const HeroPage();
-        }
+          builder: (controller) {
+            return const HeroPage();
+          }
       ),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
@@ -31,13 +30,12 @@ class AppRoutes {
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
     ),
-    // TODO: Skills 페이지 추가 후 주석 해제
-    // GetPage(
-    //   name: skills,
-    //   page: () => const SkillsPage(),
-    //   transition: Transition.fadeIn,
-    //   transitionDuration: const Duration(milliseconds: 300),
-    // ),
+    GetPage(
+      name: skills,
+      page: () => const SkillsPage(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+    ),
     // TODO: Projects 페이지 추가 후 주석 해제
     // GetPage(
     //   name: projects,

@@ -48,12 +48,13 @@ class TimeLine{
   });
 
   factory TimeLine.fromJson(Map<String, dynamic> map){
+    print(map);
     return TimeLine(
         type: TimeLineType.toState(map['type']),
         title: map['title'],
         subTitle: map['subTitle'],
-        startDate: map['startDate'],
-        endDate: map['endDate'],
+        startDate: map['startDate'].toDate(),
+        endDate: map['endDate'].toDate(),
         description: map['description'],
         iconData: TimeLineType.toIcon(map['type'])
     );
