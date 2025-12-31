@@ -10,6 +10,4 @@ class Skill{
     required this.color,
     required this.proficiency
   });
-
-
 }
