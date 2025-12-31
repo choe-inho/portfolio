@@ -38,7 +38,7 @@ class AboutMeStrengthSection extends StatelessWidget {
 
           SizedBox(height: constants.spacingXL),
 
-          // 강점 카드 리스트
+          // 강점 카드 리스트 (모바일도 그리드로 변경)
           SlideInAnimation(
             delay: const Duration(milliseconds: 500),
             child: _StrengthCardList(
@@ -141,56 +141,45 @@ class _StrengthCardList extends StatelessWidget {
     final strengths = _parseStrengths(strengthText);
 
     return Obx(() {
-      if (appController.isMobile) {
-        // 모바일: 세로 리스트
-        return Column(
-          children: strengths.asMap().entries.map((entry) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: entry.key < strengths.length - 1
-                    ? constants.spacingM
-                    : 0,
-              ),
-              child: FadeInAnimation(
-                delay: Duration(milliseconds: 600 + (entry.key * 100)),
-                child: _StrengthCard(
-                  title: entry.value['title']!,
-                  description: entry.value['description']!,
-                  index: entry.key,
-                ),
-              ),
-            );
-          }).toList(),
-        );
-      } else {
-        // 데스크톱/태블릿: 그리드
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: appController.responsive(
-              mobile: 1,
-              tablet: 2,
-              web: 3,
-            ),
-            crossAxisSpacing: constants.spacingL,
-            mainAxisSpacing: constants.spacingL,
-            childAspectRatio: 1.3,
+      // 모바일, 태블릿, 웹 모두 그리드로 표시
+      return GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: appController.responsive(
+            mobile: 3, // 모바일: 3열 (1줄에 3개씩, 총 2줄로 6개 표시)
+            tablet: 2,  // 태블릿: 2열
+            web: 3,     // 웹: 3열
           ),
-          itemCount: strengths.length,
-          itemBuilder: (context, index) {
-            final strength = strengths[index];
-            return FadeInAnimation(
-              delay: Duration(milliseconds: 600 + (index * 100)),
-              child: _StrengthCard(
-                title: strength['title']!,
-                description: strength['description']!,
-                index: index,
-              ),
-            );
-          },
-        );
-      }
+          crossAxisSpacing: appController.responsive(
+            mobile: constants.spacingS,  // 모바일: 작은 간격
+            tablet: constants.spacingL,
+            web: constants.spacingL,
+          ),
+          mainAxisSpacing: appController.responsive(
+            mobile: constants.spacingS,  // 모바일: 작은 간격
+            tablet: constants.spacingL,
+            web: constants.spacingL,
+          ),
+          childAspectRatio: appController.responsive(
+            mobile: 0.75, // 모바일: 세로로 더 긴 비율 (설명 텍스트 포함)
+            tablet: 1.3,
+            web: 1.3,
+          ),
+        ),
+        itemCount: strengths.length,
+        itemBuilder: (context, index) {
+          final strength = strengths[index];
+          return FadeInAnimation(
+            delay: Duration(milliseconds: 600 + (index * 100)),
+            child: _StrengthCard(
+              title: strength['title']!,
+              description: strength['description']!,
+              index: index,
+            ),
+          );
+        },
+      );
     });
   }
 }
@@ -274,6 +263,7 @@ class _StrengthCardState extends State<_StrengthCard>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final appController = Get.find<AppController>();
     final icon = _icons[widget.index % _icons.length];
     final colors = _getColors(context);
     final color = colors[widget.index % colors.length];
@@ -286,7 +276,13 @@ class _StrengthCardState extends State<_StrengthCard>
         scale: _scaleAnimation,
         child: AnimatedContainer(
           duration: constants.fastAnimation,
-          padding: EdgeInsets.all(constants.spacingL),
+          padding: EdgeInsets.all(
+            appController.responsive(
+              mobile: constants.spacingS,  // 모바일: 작은 패딩
+              tablet: constants.spacingL,
+              web: constants.spacingL,
+            ),
+          ),
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(
@@ -318,27 +314,55 @@ class _StrengthCardState extends State<_StrengthCard>
                 isHovered: _isHovered,
               ),
 
-              SizedBox(height: constants.spacingM),
+              SizedBox(height: appController.responsive(
+                mobile: constants.spacingXS,  // 모바일: 작은 간격
+                tablet: constants.spacingM,
+                web: constants.spacingM,
+              )),
 
               // 타이틀
               Text(
                 widget.title,
                 textAlign: TextAlign.center,
+                maxLines: appController.responsive(
+                  mobile: 2,  // 모바일: 최대 2줄
+                  tablet: 1,
+                  web: 1,
+                ),
+                overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w600,
+                  fontSize: appController.responsive(
+                    mobile: 12.sp,  // 모바일: 작은 폰트
+                    tablet: 18.sp,
+                    web: 22.sp,
+                  ),
                   color: theme.colorScheme.onSurface,
                 ),
               ),
 
-              // 설명이 있을 경우
+              // 설명이 있을 경우 (모든 디바이스에서 표시)
               if (widget.description.isNotEmpty) ...[
-                SizedBox(height: constants.spacingS),
+                SizedBox(height: appController.responsive(
+                  mobile: constants.spacingXS,
+                  tablet: constants.spacingS,
+                  web: constants.spacingS,
+                )),
                 Text(
                   widget.description,
                   textAlign: TextAlign.center,
-                  maxLines: 2,
+                  maxLines: appController.responsive(
+                    mobile: 2,  // 모바일: 2줄
+                    tablet: 2,
+                    web: 2,
+                  ),
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: appController.responsive(
+                      mobile: 10.sp,  // 모바일: 작은 폰트
+                      tablet: 14.sp,
+                      web: 14.sp,
+                    ),
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
@@ -366,11 +390,20 @@ class _CardIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final constants = AppConstants.of(context);
+    final appController = Get.find<AppController>();
 
     return AnimatedContainer(
       duration: constants.fastAnimation,
-      width: 64.r,
-      height: 64.r,
+      width: appController.responsive(
+        mobile: 40.r,  // 모바일: 작은 아이콘 컨테이너
+        tablet: 64.r,
+        web: 64.r,
+      ),
+      height: appController.responsive(
+        mobile: 40.r,
+        tablet: 64.r,
+        web: 64.r,
+      ),
       decoration: BoxDecoration(
         color: isHovered
             ? color.withValues(alpha: 0.2)
@@ -380,7 +413,11 @@ class _CardIcon extends StatelessWidget {
       child: Center(
         child: Icon(
           icon,
-          size: 32.r,
+          size: appController.responsive(
+            mobile: 20.r,  // 모바일: 작은 아이콘
+            tablet: 32.r,
+            web: 32.r,
+          ),
           color: color,
         ),
       ),

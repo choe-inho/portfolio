@@ -29,6 +29,7 @@ class QuickNavigationCards extends StatelessWidget {
 }
 
 /// 데스크톱/태블릿 - 카드 그리드
+/// Skills 제거됨: About Me, Projects, Contact (3개)
 class _DesktopQuickNavigation extends StatelessWidget {
   final Function(int)? onCardTap;
 
@@ -59,7 +60,7 @@ class _DesktopQuickNavigation extends StatelessWidget {
               crossAxisCount: appController.responsive(
                 mobile: 1,
                 tablet: 2,
-                web: 4,
+                web: 3,
               ),
               crossAxisSpacing: constants.spacingL,
               mainAxisSpacing: constants.spacingL,
@@ -73,7 +74,7 @@ class _DesktopQuickNavigation extends StatelessWidget {
                 title: data['title'] as String,
                 description: data['description'] as String,
                 color: data['color'] as Color Function(BuildContext),
-                onTap: () => onCardTap?.call(index + 1),
+                onTap: () => onCardTap?.call(index + 1), // +1 because index 0 is Home
               );
             },
           ),
@@ -88,12 +89,6 @@ class _DesktopQuickNavigation extends StatelessWidget {
       'title': 'About Me',
       'description': '저에 대해 알아보세요',
       'color': (BuildContext context) => Theme.of(context).colorScheme.primary,
-    },
-    {
-      'icon': LucideIcons.code,
-      'title': 'Skills',
-      'description': '보유한 기술 스택',
-      'color': (BuildContext context) => Theme.of(context).colorScheme.secondary,
     },
     {
       'icon': LucideIcons.briefcase,
@@ -111,6 +106,7 @@ class _DesktopQuickNavigation extends StatelessWidget {
 }
 
 /// 모바일 - 하단 네비게이션 바 스타일
+/// Skills 제거됨: About, Projects, Contact
 class _MobileQuickNavigation extends StatelessWidget {
   final Function(int)? onCardTap;
 
@@ -183,11 +179,6 @@ class _MobileQuickNavigation extends StatelessWidget {
       'icon': LucideIcons.user,
       'label': 'About',
       'color': (BuildContext context) => Theme.of(context).colorScheme.primary,
-    },
-    {
-      'icon': LucideIcons.code,
-      'label': 'Skills',
-      'color': (BuildContext context) => Theme.of(context).colorScheme.secondary,
     },
     {
       'icon': LucideIcons.briefcase,

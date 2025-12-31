@@ -9,6 +9,7 @@ import '../common/Portfolio_Navigation_Bar.dart' as nav;
 import 'About_Me_Header.dart';
 import 'About_Me_Profile_Section.dart';
 import 'About_Me_Strength_Section.dart';
+import 'About_Me_Skills_Section.dart';
 import 'About_Me_Timeline_Section.dart';
 
 class AboutMePage extends StatefulWidget {
@@ -27,7 +28,6 @@ class _AboutMePageState extends State<AboutMePage> {
   void initState() {
     super.initState();
     _controller = Get.put(AboutMeController());
-    // AboutMeController 초기화
     // 현재 라우트에 따라 네비게이션 인덱스 설정
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentRoute = Get.currentRoute;
@@ -112,6 +112,11 @@ class _AboutMePageState extends State<AboutMePage> {
                     child: AboutMeStrengthSection(
                       aboutMe: _controller.aboutMe!,
                     ),
+                  ),
+
+                  // 기술 스택 섹션 (Skills 페이지에서 가져옴)
+                  const SliverToBoxAdapter(
+                    child: AboutMeSkillsSection(),
                   ),
 
                   // 타임라인 섹션 (경력/학력)

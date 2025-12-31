@@ -170,6 +170,7 @@ class _LogoSection extends StatelessWidget {
 }
 
 /// 네비게이션 메뉴 (데스크톱/태블릿)
+/// Skills 제거됨: Home, About Me, Projects, Contact
 class _NavigationMenu extends StatelessWidget {
   final Function(int)? onItemSelected;
   final int currentIndex;
@@ -182,7 +183,6 @@ class _NavigationMenu extends StatelessWidget {
   static const List<String> _menuItems = [
     'Home',
     'About Me',
-    'Skills',
     'Projects',
     'Contact',
   ];
@@ -303,22 +303,6 @@ class _MobileMenuButton extends StatelessWidget {
     this.onItemSelected,
   });
 
-  static const List<String> _menuItems = [
-    'Home',
-    'About Me',
-    'Skills',
-    'Projects',
-    'Contact',
-  ];
-
-  static const List<IconData> _menuIcons = [
-    LucideIcons.home,
-    LucideIcons.user,
-    LucideIcons.code,
-    LucideIcons.briefcase,
-    LucideIcons.mail,
-  ];
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -338,6 +322,7 @@ class _MobileMenuButton extends StatelessWidget {
 }
 
 /// Navigation Drawer (모바일)
+/// Skills 제거됨: Home, About Me, Projects, Contact
 class NavigationDrawer extends StatelessWidget {
   final Function(int)? onItemSelected;
   final int currentIndex;
@@ -351,7 +336,6 @@ class NavigationDrawer extends StatelessWidget {
   static const List<String> _menuItems = [
     'Home',
     'About Me',
-    'Skills',
     'Projects',
     'Contact',
   ];
@@ -359,7 +343,6 @@ class NavigationDrawer extends StatelessWidget {
   static const List<IconData> _menuIcons = [
     LucideIcons.home,
     LucideIcons.user,
-    LucideIcons.code,
     LucideIcons.briefcase,
     LucideIcons.mail,
   ];

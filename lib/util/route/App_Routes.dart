@@ -2,13 +2,12 @@ import 'package:get/get.dart';
 import 'package:portfolio/controller/App_Controller.dart';
 import 'package:portfolio/screen/hero/Hero_Page.dart';
 import '../../screen/about/About_Me_Page.dart';
-import '../../screen/skill/Skills_Page.dart';
 
 class AppRoutes {
   // 라우트 이름 상수
   static const String home = '/';
   static const String aboutMe = '/about-me';
-  static const String skills = '/skills';
+  // Skills 페이지 제거 - About Me에 통합됨
   static const String projects = '/projects';
   static const String contact = '/contact';
 
@@ -30,12 +29,6 @@ class AppRoutes {
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
     ),
-    GetPage(
-      name: skills,
-      page: () => const SkillsPage(),
-      transition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 300),
-    ),
     // TODO: Projects 페이지 추가 후 주석 해제
     // GetPage(
     //   name: projects,
@@ -53,6 +46,7 @@ class AppRoutes {
   ];
 
   // 인덱스로 라우트 이름 가져오기
+  // 0: Home, 1: About Me, 2: Projects, 3: Contact
   static String getRouteByIndex(int index) {
     switch (index) {
       case 0:
@@ -60,10 +54,8 @@ class AppRoutes {
       case 1:
         return aboutMe;
       case 2:
-        return skills;
-      case 3:
         return projects;
-      case 4:
+      case 3:
         return contact;
       default:
         return home;
@@ -77,12 +69,10 @@ class AppRoutes {
         return 0;
       case aboutMe:
         return 1;
-      case skills:
-        return 2;
       case projects:
-        return 3;
+        return 2;
       case contact:
-        return 4;
+        return 3;
       default:
         return 0;
     }
