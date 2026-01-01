@@ -4,8 +4,8 @@ import 'package:portfolio/controller/App_Controller.dart';
 import 'package:portfolio/util/animation/Portfolio_Animation.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 
-class SkillsHeader extends StatelessWidget {
-  const SkillsHeader({super.key});
+class ProjectsHeader extends StatelessWidget {
+  const ProjectsHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class _DesktopHeader extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            theme.colorScheme.secondaryContainer.withValues(alpha: 0.3),
+            theme.colorScheme.tertiaryContainer.withValues(alpha: 0.3),
             theme.colorScheme.primaryContainer.withValues(alpha: 0.2),
           ],
         ),
@@ -85,7 +85,7 @@ class _MobileHeader extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            theme.colorScheme.secondaryContainer.withValues(alpha: 0.3),
+            theme.colorScheme.tertiaryContainer.withValues(alpha: 0.3),
             theme.colorScheme.primaryContainer.withValues(alpha: 0.2),
           ],
         ),
@@ -123,11 +123,11 @@ class _HeaderTitle extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Text(
-      'Skills',
+      'Projects',
       textAlign: TextAlign.center,
       style: theme.textTheme.displayMedium?.copyWith(
         fontWeight: FontWeight.w700,
-        color: theme.colorScheme.secondary,
+        color: theme.colorScheme.tertiary,
       ),
     );
   }
@@ -142,7 +142,7 @@ class _HeaderSubtitle extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Text(
-      '기술 스택 & 역량',
+      '진행한 프로젝트들',
       textAlign: TextAlign.center,
       style: theme.textTheme.titleLarge?.copyWith(
         color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
@@ -161,7 +161,7 @@ class _HeaderDescription extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Text(
-      '다양한 기술을 활용하여 최적의 솔루션을 제공합니다',
+      '다양한 프로젝트 경험을 통해 실력을 쌓아왔습니다',
       textAlign: TextAlign.center,
       style: theme.textTheme.bodyLarge?.copyWith(
         color: theme.colorScheme.onSurface.withValues(alpha: 0.6),

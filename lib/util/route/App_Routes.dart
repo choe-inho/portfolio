@@ -2,12 +2,12 @@ import 'package:get/get.dart';
 import 'package:portfolio/controller/App_Controller.dart';
 import 'package:portfolio/screen/hero/Hero_Page.dart';
 import '../../screen/about/About_Me_Page.dart';
+import '../../screen/projects/Projects_Page.dart';
 
 class AppRoutes {
   // 라우트 이름 상수
   static const String home = '/';
   static const String aboutMe = '/about-me';
-  // Skills 페이지 제거 - About Me에 통합됨
   static const String projects = '/projects';
   static const String contact = '/contact';
 
@@ -29,13 +29,12 @@ class AppRoutes {
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
     ),
-    // TODO: Projects 페이지 추가 후 주석 해제
-    // GetPage(
-    //   name: projects,
-    //   page: () => const ProjectsPage(),
-    //   transition: Transition.fadeIn,
-    //   transitionDuration: const Duration(milliseconds: 300),
-    // ),
+    GetPage(
+      name: projects,
+      page: () => const ProjectsPage(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+    ),
     // TODO: Contact 페이지 추가 후 주석 해제
     // GetPage(
     //   name: contact,

@@ -40,6 +40,7 @@ enum ProjectVolume{
 }
 
 class Project{
+  final String? id;
   final String title;
   final String description;
   final List<String> skills;
@@ -50,6 +51,7 @@ class Project{
   final ProjectVolume volume;
 
   Project({
+    this.id,
     required this.title,
     required this.description,
     required this.skills,
@@ -65,25 +67,51 @@ class Project{
     return {
       'title' : title,
       'description' : description,
-      'skills' : skills,
+      'skills' : List<String>.from(skills),
       'thumbnail' : thumbnail,
       'notion' : notion,
       'startAt' : startAt,
       'endAt' : endAt,
-      'volume' : volume
+      'volume' : volume.value,
     };
   }
 
-  factory Project.fromJson(Map<String, dynamic> map){
-      return Project(
-          title: map['title'],
-          description: map['description'],
-          skills: map['skills'],
-          thumbnail: map['thumbnail'],
-          notion: map['notion'],
-          startAt: map['startAt'].toDate(),
-          endAt: map['endAt'].toDate(),
-          volume: map['volume']
-      );
+  factory Project.fromJson(Map<String, dynamic> map, {String? id}){
+    return Project(
+        id: id,
+        title: map['title'] ?? '',
+        description: map['description'] ?? '',
+        skills: List<String>.from(map['skills'] ?? []),
+        thumbnail: map['thumbnail'] ?? '',
+        notion: map['notion'] ?? '',
+        startAt: map['startAt']?.toDate() ?? DateTime.now(),
+        endAt: map['endAt']?.toDate() ?? DateTime.now(),
+        volume: ProjectVolume.toState(map['volume'])
+    );
+  }
+
+  // copyWith 메서드 추가 (수정 시 유용)
+  Project copyWith({
+    String? id,
+    String? title,
+    String? description,
+    List<String>? skills,
+    String? thumbnail,
+    String? notion,
+    DateTime? startAt,
+    DateTime? endAt,
+    ProjectVolume? volume,
+  }) {
+    return Project(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      skills: skills ?? this.skills,
+      thumbnail: thumbnail ?? this.thumbnail,
+      notion: notion ?? this.notion,
+      startAt: startAt ?? this.startAt,
+      endAt: endAt ?? this.endAt,
+      volume: volume ?? this.volume,
+    );
   }
 }
