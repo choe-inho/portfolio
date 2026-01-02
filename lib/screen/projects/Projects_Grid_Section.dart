@@ -7,6 +7,7 @@ import 'package:portfolio/util/animation/Portfolio_Animation.dart';
 import 'package:portfolio/util/animation/Portfolio_Indicator.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 
+import '../common/Loading_State.dart';
 import 'Projects_Card.dart';
 
 class ProjectsGridSection extends StatelessWidget {
@@ -26,7 +27,7 @@ class ProjectsGridSection extends StatelessWidget {
 
         // 로딩 중
         if (!controller.isDataLoaded.value) {
-          return _LoadingState();
+          return LoadingState(loading: '프로젝트 불러오는 중',);
         }
 
         // 데이터 없음
@@ -43,38 +44,6 @@ class ProjectsGridSection extends StatelessWidget {
   }
 }
 
-/// 로딩 상태
-class _LoadingState extends StatelessWidget {
-  const _LoadingState();
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final constants = AppConstants.of(context);
-
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(constants.largePadding(context) * 2),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            PortfolioLoadingIndicator(
-              style: IndicatorStyle.codingAnimation,
-              size: constants.defaultIndicatorSize(context),
-            ),
-            SizedBox(height: constants.spacingL),
-            Text(
-              '프로젝트를 불러오는 중...',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 /// 빈 상태
 class _EmptyState extends StatelessWidget {

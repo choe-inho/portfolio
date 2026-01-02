@@ -3,6 +3,7 @@ import 'package:portfolio/controller/App_Controller.dart';
 import 'package:portfolio/screen/hero/Hero_Page.dart';
 import '../../screen/about/About_Me_Page.dart';
 import '../../screen/projects/Projects_Page.dart';
+import '../../screen/contact/Contact_Page.dart';
 
 class AppRoutes {
   // 라우트 이름 상수
@@ -35,13 +36,12 @@ class AppRoutes {
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
     ),
-    // TODO: Contact 페이지 추가 후 주석 해제
-    // GetPage(
-    //   name: contact,
-    //   page: () => const ContactPage(),
-    //   transition: Transition.fadeIn,
-    //   transitionDuration: const Duration(milliseconds: 300),
-    // ),
+    GetPage(
+      name: contact,
+      page: () => const ContactPage(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 300),
+    ),
   ];
 
   // 인덱스로 라우트 이름 가져오기

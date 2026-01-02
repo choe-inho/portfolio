@@ -1,11 +1,22 @@
 class Contact{
-  final String name;
-  final String contact;
-  final String link;
+  final String local;
+  final String city;
+  final String phone;
+  final String instagram;
 
   Contact({
-    required this.name,
-    required this.contact,
-    required this.link
+    required this.local,
+    required this.city,
+    required this.phone,
+    required this.instagram
   });
+
+  factory Contact.fromJson(Map<String, dynamic> map) {
+    return Contact(
+        local: map['local'],
+        city: map['city'],
+        phone: map['phone'],
+        instagram: map['instagram']
+    );
+  }
 }

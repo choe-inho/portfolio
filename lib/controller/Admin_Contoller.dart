@@ -108,10 +108,6 @@ class AdminController extends GetxController {
       return isLoggedIn.value && isAdmin.value;
     }
 
-    // 디버그 모드에서도 인증 필요 (보안 강화)
-    // 만약 디버그 모드에서 인증 없이 사용하고 싶다면 아래 주석 해제
-    // if (kDebugMode) return true;
-
     return isLoggedIn.value && isAdmin.value;
   }
 
