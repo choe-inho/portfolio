@@ -10,6 +10,10 @@ import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:portfolio/util/helper/DateTime_Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../controller/Admin_Contoller.dart';
+import '../admin/Admin_Login_Dialog.dart';
+import 'Project_Form_Dialog.dart';
+
 class ProjectCard extends StatefulWidget {
   final Project project;
 
@@ -67,6 +71,33 @@ class _ProjectCardState extends State<ProjectCard>
     }
   }
 
+  /// 관리자 권한 확인 후 수정 다이얼로그 표시
+  Future<void> _showEditDialog() async {
+    final adminController = Get.find<AdminController>();
+
+    if (adminController.canUseAdminFeatures) {
+      // 이미 로그인된 관리자
+      _openEditDialog();
+    } else {
+      // 로그인 필요
+      final loggedIn = await showDialog<bool>(
+        context: context,
+        builder: (context) => const AdminLoginDialog(),
+      );
+
+      if (loggedIn == true) {
+        _openEditDialog();
+      }
+    }
+  }
+
+  void _openEditDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => ProjectFormDialog(project: widget.project),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -82,83 +113,152 @@ class _ProjectCardState extends State<ProjectCard>
         scale: _scaleAnimation,
         child: GestureDetector(
           onTap: _openNotionLink,
-          child: AnimatedContainer(
-            duration: constants.fastAnimation,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(
-                constants.largeBorderRadius(context),
-              ),
-              border: Border.all(
-                color: _isHovered
-                    ? volumeColor.withValues(alpha: 0.5)
-                    : theme.colorScheme.outline.withValues(alpha: 0.2),
-                width: _isHovered ? 2 : 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: _isHovered
-                      ? volumeColor.withValues(alpha: 0.2)
-                      : Colors.black.withValues(alpha: 0.05),
-                  blurRadius: _isHovered ? 20 : 10,
-                  offset: Offset(0, _isHovered ? 8 : 4),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 썸네일 이미지
-                _ThumbnailImage(
-                  imageUrl: widget.project.thumbnail,
-                  isHovered: _isHovered,
-                ),
-
-                // 콘텐츠 영역
-                Padding(
-                  padding: EdgeInsets.all(constants.spacingL),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 프로젝트 타입 & 기간
-                      _ProjectMetadata(
-                        volume: widget.project.volume,
-                        startDate: widget.project.startAt,
-                        endDate: widget.project.endAt,
-                      ),
-
-                      SizedBox(height: constants.spacingM),
-
-                      // 제목
-                      _ProjectTitle(title: widget.project.title),
-
-                      SizedBox(height: constants.spacingS),
-
-                      // 설명
-                      _ProjectDescription(
-                          description: widget.project.description),
-
-                      SizedBox(height: constants.spacingM),
-
-                      // 스킬 태그
-                      _SkillTags(
-                        skills: widget.project.skills,
-                        volumeColor: volumeColor,
-                      ),
-
-                      SizedBox(height: constants.spacingM),
-
-                      // 더보기 버튼
-                      _ViewMoreButton(isHovered: _isHovered),
-                    ],
+          child: Stack(
+            children: [
+              AnimatedContainer(
+                duration: constants.fastAnimation,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(
+                    constants.largeBorderRadius(context),
                   ),
+                  border: Border.all(
+                    color: _isHovered
+                        ? volumeColor.withValues(alpha: 0.5)
+                        : theme.colorScheme.outline.withValues(alpha: 0.2),
+                    width: _isHovered ? 2 : 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _isHovered
+                          ? volumeColor.withValues(alpha: 0.2)
+                          : Colors.black.withValues(alpha: 0.05),
+                      blurRadius: _isHovered ? 20 : 10,
+                      offset: Offset(0, _isHovered ? 8 : 4),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _ThumbnailImage(
+                      imageUrl: widget.project.thumbnail,
+                      isHovered: _isHovered,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(constants.spacingL),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _ProjectMetadata(
+                            volume: widget.project.volume,
+                            startDate: widget.project.startAt,
+                            endDate: widget.project.endAt,
+                          ),
+                          SizedBox(height: constants.spacingM),
+                          _ProjectTitle(title: widget.project.title),
+                          SizedBox(height: constants.spacingS),
+                          _ProjectDescription(
+                              description: widget.project.description),
+                          SizedBox(height: constants.spacingM),
+                          _SkillTags(
+                            skills: widget.project.skills,
+                            volumeColor: volumeColor,
+                          ),
+                          SizedBox(height: constants.spacingM),
+                          _ViewMoreButton(isHovered: _isHovered),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // 관리자일 때만 수정 버튼 표시
+              _EditButton(onPressed: _showEditDialog),
+            ],
           ),
         ),
       ),
     );
+  }
+}
+
+/// 수정 버튼 (관리자 권한 체크)
+class _EditButton extends StatefulWidget {
+  final VoidCallback onPressed;
+
+  const _EditButton({required this.onPressed});
+
+  @override
+  State<_EditButton> createState() => _EditButtonState();
+}
+
+class _EditButtonState extends State<_EditButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final adminController = Get.find<AdminController>();
+    final theme = Theme.of(context);
+
+    return Obx(() {
+      // 로그인된 사용자만 버튼 표시
+      if (!adminController.isLoggedIn.value) {
+        return const SizedBox.shrink();
+      }
+
+      return Positioned(
+        top: 8,
+        right: 8,
+        child: MouseRegion(
+          onEnter: (_) => setState(() => _isHovered = true),
+          onExit: (_) => setState(() => _isHovered = false),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: widget.onPressed,
+              borderRadius: BorderRadius.circular(8.r),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: EdgeInsets.all(8.r),
+                decoration: BoxDecoration(
+                  color: _isHovered
+                      ? theme.colorScheme.primaryContainer
+                      : theme.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(
+                    color: adminController.isAdmin.value
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.secondary,
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (adminController.isAdmin.value
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.secondary)
+                          .withValues(alpha: 0.2),
+                      blurRadius: _isHovered ? 8 : 4,
+                      offset: Offset(0, _isHovered ? 3 : 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  adminController.isAdmin.value
+                      ? LucideIcons.edit
+                      : LucideIcons.lock,
+                  size: 16.r,
+                  color: adminController.isAdmin.value
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.secondary,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    });
   }
 }
 
@@ -184,7 +284,6 @@ class _ThumbnailImage extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // 이미지
           AnimatedContainer(
             duration: constants.fastAnimation,
             height: appController.responsive(
@@ -200,8 +299,6 @@ class _ThumbnailImage extends StatelessWidget {
               errorWidget: (context, url, error) => _ImageError(),
             ),
           ),
-
-          // 호버 오버레이
           if (isHovered)
             Positioned.fill(
               child: Container(
@@ -223,7 +320,6 @@ class _ThumbnailImage extends StatelessWidget {
   }
 }
 
-/// 이미지 로딩 플레이스홀더
 class _ImagePlaceholder extends StatelessWidget {
   const _ImagePlaceholder();
 
@@ -244,7 +340,6 @@ class _ImagePlaceholder extends StatelessWidget {
   }
 }
 
-/// 이미지 에러
 class _ImageError extends StatelessWidget {
   const _ImageError();
 
@@ -276,7 +371,6 @@ class _ImageError extends StatelessWidget {
   }
 }
 
-/// 프로젝트 메타데이터 (타입 & 기간)
 class _ProjectMetadata extends StatelessWidget {
   final ProjectVolume volume;
   final DateTime startDate;
@@ -294,13 +388,11 @@ class _ProjectMetadata extends StatelessWidget {
     final constants = AppConstants.of(context);
     final volumeColor = ProjectVolume.stateToTextColor(volume, context);
     final volumeText = ProjectVolume.stateToText(volume);
-
     final periodText =
         '${DateTimeUtils.timelineToText(startDate)} - ${DateTimeUtils.timelineToText(endDate)}';
 
     return Row(
       children: [
-        // 프로젝트 타입 배지
         Container(
           padding: EdgeInsets.symmetric(
             horizontal: constants.spacingM,
@@ -325,10 +417,7 @@ class _ProjectMetadata extends StatelessWidget {
             ),
           ),
         ),
-
         SizedBox(width: constants.spacingS),
-
-        // 기간
         Container(
           padding: EdgeInsets.symmetric(
             horizontal: constants.spacingM,
@@ -365,7 +454,6 @@ class _ProjectMetadata extends StatelessWidget {
   }
 }
 
-/// 프로젝트 제목
 class _ProjectTitle extends StatelessWidget {
   final String title;
 
@@ -387,7 +475,6 @@ class _ProjectTitle extends StatelessWidget {
   }
 }
 
-/// 프로젝트 설명
 class _ProjectDescription extends StatelessWidget {
   final String description;
 
@@ -409,7 +496,6 @@ class _ProjectDescription extends StatelessWidget {
   }
 }
 
-/// 스킬 태그들
 class _SkillTags extends StatelessWidget {
   final List<String> skills;
   final Color volumeColor;
@@ -433,7 +519,6 @@ class _SkillTags extends StatelessWidget {
   }
 }
 
-/// 스킬 태그
 class _SkillTag extends StatelessWidget {
   final String skill;
   final Color color;
@@ -475,7 +560,6 @@ class _SkillTag extends StatelessWidget {
   }
 }
 
-/// 더보기 버튼
 class _ViewMoreButton extends StatelessWidget {
   final bool isHovered;
 
@@ -495,7 +579,7 @@ class _ViewMoreButton extends StatelessWidget {
         ),
         SizedBox(width: constants.spacingXS),
         Text(
-          'Notion에서 자세히 보기',
+          '자세히 보기',
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.primary,
             fontWeight: FontWeight.w600,

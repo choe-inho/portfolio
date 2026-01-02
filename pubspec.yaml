@@ -40,6 +40,7 @@ dependencies:
   firebase_core:
   firebase_storage:
   cloud_firestore:
+  firebase_auth:
 
   flutter_dotenv:
 
@@ -50,6 +51,9 @@ dependencies:
   url_launcher:
 
   intl:
+
+  image_picker:
+  uuid:
 dev_dependencies:
   flutter_test:
     sdk: flutter

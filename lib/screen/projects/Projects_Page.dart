@@ -1,12 +1,14 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:portfolio/controller/Projects_Controller.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:portfolio/util/route/App_Routes.dart';
+import '../../controller/Admin_Contoller.dart';
+import '../admin/Admin_Login_Dialog.dart';
 import '../common/Portfoil_Footer.dart';
 import '../common/Portfolio_Navigation_Bar.dart' as nav;
+import 'Project_Form_Dialog.dart';
 import 'Projects_Filter_Section.dart';
 import 'Projects_Grid_Section.dart';
 import 'Projects_Header.dart';
@@ -19,16 +21,17 @@ class ProjectsPage extends StatefulWidget {
 }
 
 class _ProjectsPageState extends State<ProjectsPage> {
-  late ProjectsController _controller;
-  int _currentNavIndex = 2; // Projects 페이지는 인덱스 2
+  late ProjectsController _projectsController;
+  late AdminController _adminController;
+  int _currentNavIndex = 2;
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _controller = Get.put(ProjectsController());
+    _projectsController = Get.put(ProjectsController());
+    _adminController = Get.put(AdminController(), permanent: true);
 
-    // 현재 라우트에 따라 네비게이션 인덱스 설정
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentRoute = Get.currentRoute;
       setState(() {
@@ -54,6 +57,31 @@ class _ProjectsPageState extends State<ProjectsPage> {
     }
   }
 
+  /// 관리자 기능 실행 전 권한 확인
+  Future<void> _executeAdminAction(VoidCallback action) async {
+    if (_adminController.canUseAdminFeatures) {
+      // 이미 로그인된 관리자
+      action();
+    } else {
+      // 로그인 필요
+      final loggedIn = await showDialog<bool>(
+        context: context,
+        builder: (context) => const AdminLoginDialog(),
+      );
+
+      if (loggedIn == true) {
+        action();
+      }
+    }
+  }
+
+  void _showAddProjectDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => const ProjectFormDialog(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -65,8 +93,10 @@ class _ProjectsPageState extends State<ProjectsPage> {
         currentIndex: _currentNavIndex,
         onItemSelected: _handleNavigationItemSelected,
       ),
-      // 디버그 모드일 때만 FAB 표시
-      floatingActionButton: kDebugMode ? _AddProjectFAB() : null,
+      // 관리자 패널 (항상 표시, 로그인 상태에 따라 다르게 작동)
+      floatingActionButton: _AdminFAB(
+        onPressed: () => _executeAdminAction(_showAddProjectDialog),
+      ),
       body: Column(
         children: [
           // 네비게이션 바
@@ -75,35 +105,26 @@ class _ProjectsPageState extends State<ProjectsPage> {
             onItemSelected: _handleNavigationItemSelected,
           ),
 
+          // 관리자 상태 표시 바 (로그인 시에만)
+          Obx(() {
+            if (_adminController.isLoggedIn.value) {
+              return _AdminStatusBar();
+            }
+            return const SizedBox.shrink();
+          }),
+
           // 스크롤 가능한 콘텐츠
           Expanded(
             child: CustomScrollView(
               controller: _scrollController,
               slivers: [
-                // 헤더 섹션
-                const SliverToBoxAdapter(
-                  child: ProjectsHeader(),
-                ),
-
-                // 필터 섹션
-                const SliverToBoxAdapter(
-                  child: ProjectsFilterSection(),
-                ),
-
-                // 프로젝트 그리드 섹션
-                const SliverToBoxAdapter(
-                  child: ProjectsGridSection(),
-                ),
-
-                // 하단 여백
+                const SliverToBoxAdapter(child: ProjectsHeader()),
+                const SliverToBoxAdapter(child: ProjectsFilterSection()),
+                const SliverToBoxAdapter(child: ProjectsGridSection()),
                 SliverToBoxAdapter(
                   child: SizedBox(height: constants.spacingXXL),
                 ),
-
-                // Footer
-                const SliverToBoxAdapter(
-                  child: PortfolioFooter(),
-                ),
+                const SliverToBoxAdapter(child: PortfolioFooter()),
               ],
             ),
           ),
@@ -113,231 +134,91 @@ class _ProjectsPageState extends State<ProjectsPage> {
   }
 }
 
-/// 프로젝트 추가 FAB (디버그 모드 전용)
-class _AddProjectFAB extends StatelessWidget {
-  const _AddProjectFAB();
+/// 관리자 FAB
+class _AdminFAB extends StatelessWidget {
+  final VoidCallback onPressed;
 
-  void _showAddProjectDialog(BuildContext context) {
-    // TODO: 프로젝트 추가/수정 다이얼로그 표시
-    showDialog(
-      context: context,
-      builder: (context) => _ProjectFormDialog(),
-    );
-  }
+  const _AdminFAB({required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
+    final adminController = Get.find<AdminController>();
     final theme = Theme.of(context);
-    final constants = AppConstants.of(context);
 
-    return FloatingActionButton.extended(
-      onPressed: () => _showAddProjectDialog(context),
-      backgroundColor: theme.colorScheme.primary,
-      icon: Icon(
-        LucideIcons.plus,
-        color: theme.colorScheme.onPrimary,
-      ),
-      label: Text(
-        '프로젝트 추가',
-        style: TextStyle(
+    return Obx(() {
+      final isAdmin = adminController.canUseAdminFeatures;
+
+      return FloatingActionButton.extended(
+        onPressed: onPressed,
+        backgroundColor: isAdmin
+            ? theme.colorScheme.primary
+            : theme.colorScheme.secondary,
+        icon: Icon(
+          isAdmin ? LucideIcons.plus : LucideIcons.shield,
           color: theme.colorScheme.onPrimary,
-          fontWeight: FontWeight.w600,
         ),
-      ),
-    );
+        label: Text(
+          isAdmin ? '프로젝트 추가' : '관리자 로그인',
+          style: TextStyle(
+            color: theme.colorScheme.onPrimary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      );
+    });
   }
 }
 
-/// 프로젝트 추가/수정 다이얼로그
-class _ProjectFormDialog extends StatelessWidget {
-  const _ProjectFormDialog();
+/// 관리자 상태 표시 바
+class _AdminStatusBar extends StatelessWidget {
+  const _AdminStatusBar();
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final constants = AppConstants.of(context);
-
-    return AlertDialog(
-      title: Row(
-        children: [
-          Icon(
-            LucideIcons.folderPlus,
-            color: theme.colorScheme.primary,
-          ),
-          SizedBox(width: constants.spacingS),
-          Text('프로젝트 추가'),
-        ],
-      ),
-      content: SizedBox(
-        width: constants.dialogMaxWidth(context),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Firebase Console에서 직접 프로젝트를 추가하세요',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                ),
-              ),
-              SizedBox(height: constants.spacingL),
-              _InfoRow(
-                icon: LucideIcons.database,
-                label: 'Collection',
-                value: 'projects',
-              ),
-              SizedBox(height: constants.spacingM),
-              Text(
-                '필수 필드:',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(height: constants.spacingS),
-              _FieldInfo(field: 'title', type: 'string', description: '프로젝트 제목'),
-              _FieldInfo(
-                  field: 'description',
-                  type: 'string',
-                  description: '프로젝트 설명'),
-              _FieldInfo(
-                  field: 'skills',
-                  type: 'array',
-                  description: '사용 기술 (예: ["Flutter", "Node"])'),
-              _FieldInfo(
-                  field: 'thumbnail',
-                  type: 'string',
-                  description: '썸네일 이미지 URL'),
-              _FieldInfo(
-                  field: 'notion', type: 'string', description: 'Notion 페이지 URL'),
-              _FieldInfo(
-                  field: 'startAt', type: 'timestamp', description: '시작 날짜'),
-              _FieldInfo(field: 'endAt', type: 'timestamp', description: '종료 날짜'),
-              _FieldInfo(
-                  field: 'volume',
-                  type: 'string',
-                  description:
-                  '프로젝트 타입 (personal/team/company)'),
-            ],
-          ),
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('닫기'),
-        ),
-      ],
-    );
-  }
-}
-
-/// 정보 행
-class _InfoRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  const _InfoRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+    final adminController = Get.find<AdminController>();
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
 
     return Container(
-      padding: EdgeInsets.all(constants.spacingM),
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: constants.horizontalPadding(context),
+        vertical: constants.spacingS,
+      ),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(constants.borderRadius(context)),
+        color: theme.colorScheme.primaryContainer,
+        border: Border(
+          bottom: BorderSide(
+            color: theme.colorScheme.primary.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: theme.colorScheme.primary),
+          Icon(
+            LucideIcons.shieldCheck,
+            size: 16,
+            color: theme.colorScheme.primary,
+          ),
           SizedBox(width: constants.spacingS),
           Text(
-            '$label: ',
-            style: theme.textTheme.bodyMedium?.copyWith(
+            '관리자 모드: ${adminController.currentUser?.email ?? "알 수 없음"}',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.primary,
               fontWeight: FontWeight.w600,
             ),
           ),
-          Expanded(
-            child: Text(
-              value,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// 필드 정보
-class _FieldInfo extends StatelessWidget {
-  final String field;
-  final String type;
-  final String description;
-
-  const _FieldInfo({
-    required this.field,
-    required this.type,
-    required this.description,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final constants = AppConstants.of(context);
-
-    return Padding(
-      padding: EdgeInsets.only(bottom: constants.spacingS),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: constants.spacingS,
-              vertical: 2,
-            ),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primaryContainer,
-              borderRadius:
-              BorderRadius.circular(constants.pillBorderRadius(context)),
-            ),
-            child: Text(
-              type,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.w600,
-                fontSize: 10,
-              ),
-            ),
-          ),
-          SizedBox(width: constants.spacingS),
-          Expanded(
-            child: RichText(
-              text: TextSpan(
-                style: theme.textTheme.bodySmall,
-                children: [
-                  TextSpan(
-                    text: '$field: ',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  TextSpan(
-                    text: description,
-                    style: TextStyle(
-                      color:
-                      theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
-                  ),
-                ],
+          const Spacer(),
+          TextButton.icon(
+            onPressed: () => adminController.signOut(),
+            icon: Icon(LucideIcons.logOut, size: 14),
+            label: const Text('로그아웃'),
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.primary,
+              padding: EdgeInsets.symmetric(
+                horizontal: constants.spacingM,
+                vertical: constants.spacingXS,
               ),
             ),
           ),

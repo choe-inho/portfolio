@@ -44,6 +44,11 @@ class _FilterButtons extends StatelessWidget {
     final constants = AppConstants.of(context);
 
     return Obx(() {
+      // 프로젝트가 로드되지 않았으면 빈 위젯 반환
+      if (!controller.isDataLoaded.value) {
+        return const SizedBox.shrink();
+      }
+
       return Wrap(
         spacing: constants.spacingM,
         runSpacing: constants.spacingM,

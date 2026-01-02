@@ -3,10 +3,11 @@ import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:portfolio/controller/App_Controller.dart';
 import 'package:portfolio/controller/Projects_Controller.dart';
-import 'package:portfolio/screen/projects/Projects_Card.dart';
 import 'package:portfolio/util/animation/Portfolio_Animation.dart';
 import 'package:portfolio/util/animation/Portfolio_Indicator.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
+
+import 'Projects_Card.dart';
 
 class ProjectsGridSection extends StatelessWidget {
   const ProjectsGridSection({super.key});
@@ -20,24 +21,24 @@ class ProjectsGridSection extends StatelessWidget {
         horizontal: constants.horizontalPadding(context),
         vertical: constants.spacingXXL,
       ),
-      child: GetBuilder<ProjectsController>(
-        builder: (controller) {
-          // 로딩 중
-          if (!controller.isDataLoaded.value) {
-            return _LoadingState();
-          }
+      child: Obx(() {
+        final controller = Get.find<ProjectsController>();
 
-          // 데이터 없음
-          if (controller.filteredProjects.isEmpty) {
-            return _EmptyState();
-          }
+        // 로딩 중
+        if (!controller.isDataLoaded.value) {
+          return _LoadingState();
+        }
 
-          // 정상 상태 - 프로젝트 그리드
-          return _ProjectsGrid(
-            projects: controller.filteredProjects,
-          );
-        },
-      ),
+        // 데이터 없음
+        if (controller.filteredProjects.isEmpty) {
+          return _EmptyState();
+        }
+
+        // 정상 상태 - 프로젝트 그리드
+        return _ProjectsGrid(
+          projects: controller.filteredProjects,
+        );
+      }),
     );
   }
 }
