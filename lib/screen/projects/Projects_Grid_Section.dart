@@ -111,9 +111,9 @@ class _ProjectsGrid extends StatelessWidget {
           crossAxisSpacing: constants.spacingL,
           mainAxisSpacing: constants.spacingL,
           childAspectRatio: appController.responsive(
-            mobile: 0.82,
-            tablet: 1.15,
-            web: 0.95,
+            mobile: 0.72,
+            tablet: 1.05,
+            web: 0.9,
           ),
         ),
         itemCount: projects.length,

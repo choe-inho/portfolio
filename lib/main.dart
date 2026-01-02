@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:portfolio/Portfolio.dart';
+import 'package:portfolio/controller/About_Me_Controller.dart';
 import 'package:portfolio/controller/App_Controller.dart';
 import 'firebase_options.dart';
 import 'Error_Fall_Back_Web.dart';
@@ -60,6 +61,7 @@ void _initializeControllers() {
   // AppController를 영구적으로 등록 (앱 전체에서 사용)
   // permanent: true로 설정하여 앱이 종료될 때까지 유지
   Get.put(AppController(), permanent: true);
+  Get.put(AboutMeController(), permanent: true);
 
   debugPrint('✅ [Main] GetX 컨트롤러 초기화 완료');
 

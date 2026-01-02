@@ -93,9 +93,6 @@ class ContactController extends GetxController {
       if (doc.exists) {
         contactInfo.value = Contact.fromJson(doc.data()!);
         debugPrint('✅ [Contact Controller] Contact 정보 로드 완료');
-        debugPrint('   - 위치: ${contactInfo.value!.city}, ${contactInfo.value!.local}');
-        debugPrint('   - 전화: ${contactInfo.value!.phone}');
-        debugPrint('   - 인스타: ${contactInfo.value!.instagram}');
       } else {
         debugPrint('❌ [Contact Controller] Contact 문서가 존재하지 않음');
         contactInfo.value = null;

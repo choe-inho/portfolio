@@ -1,66 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:portfolio/controller/About_Me_Controller.dart';
 import 'package:portfolio/controller/App_Controller.dart';
 import 'package:portfolio/util/animation/Portfolio_Indicator.dart';
 
 /// Hero 섹션 프로필 이미지
 /// AboutMeController에서 프로필 이미지를 가져와 표시합니다.
-/// HTTP 415 에러 해결: URL 검증 및 대체 로딩 방식
-class HeroImage extends StatefulWidget {
+/// - 무한 로딩 해결: Get.find로 기존 컨트롤러 사용
+/// - 애니메이션 제거: 깔끔한 정적 이미지
+/// - 사각형 디자인: borderRadius 적용
+/// - 자연스러운 그림자
+class HeroImage extends StatelessWidget {
   const HeroImage({super.key});
-
-  @override
-  State<HeroImage> createState() => _HeroImageState();
-}
-
-class _HeroImageState extends State<HeroImage> with TickerProviderStateMixin {
-  late AnimationController _floatController;
-  late AnimationController _glowController;
-
-  late Animation<double> _floatAnimation;
-  late Animation<double> _glowAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Float Animation (위아래로 부드럽게 떠다니는 효과)
-    _floatController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 4),
-    )..repeat(reverse: true);
-
-    _floatAnimation = Tween<double>(
-      begin: -8,
-      end: 8,
-    ).animate(CurvedAnimation(
-      parent: _floatController,
-      curve: Curves.easeInOut,
-    ));
-
-    // Glow Animation (빛나는 효과)
-    _glowController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 3000),
-    )..repeat(reverse: true);
-
-    _glowAnimation = Tween<double>(
-      begin: 0.4,
-      end: 0.7,
-    ).animate(CurvedAnimation(
-      parent: _glowController,
-      curve: Curves.easeInOut,
-    ));
-  }
-
-  @override
-  void dispose() {
-    _floatController.dispose();
-    _glowController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,179 +26,118 @@ class _HeroImageState extends State<HeroImage> with TickerProviderStateMixin {
     );
 
     return Center(
-      child: AnimatedBuilder(
-        animation: Listenable.merge([
-          _floatController,
-          _glowController,
-        ]),
-        builder: (context, child) {
-          return Transform.translate(
-            offset: Offset(0, _floatAnimation.value),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Glow effect (외부 빛)
-                _GlowEffect(
-                  size: imageSize * 1.2,
-                  glowOpacity: _glowAnimation.value,
-                ),
-
-                // 프로필 이미지
-                _ProfileImage(
-                  size: imageSize,
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-/// Glow Effect Widget
-class _GlowEffect extends StatelessWidget {
-  final double size;
-  final double glowOpacity;
-
-  const _GlowEffect({
-    required this.size,
-    required this.glowOpacity,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: theme.colorScheme.primary.withValues(
-              alpha: glowOpacity * 0.5,
-            ),
-            blurRadius: 60,
-            spreadRadius: 10,
-          ),
-        ],
-      ),
+      child: _ProfileImage(size: imageSize),
     );
   }
 }
 
 /// 프로필 이미지 Widget
-class _ProfileImage extends StatelessWidget {
+class _ProfileImage extends StatefulWidget {
   final double size;
 
   const _ProfileImage({
     required this.size,
   });
 
-  /// Firebase Storage URL 검증 및 수정
-  String _sanitizeImageUrl(String url) {
-    // 이미 올바른 형식이면 그대로 반환
-    if (url.contains('firebasestorage.googleapis.com') && url.contains('alt=media')) {
-      debugPrint('✅ [Hero Image] 올바른 URL 형식: $url');
-      return url;
-    }
+  @override
+  State<_ProfileImage> createState() => _ProfileImageState();
+}
 
-    // URL이 Firebase Storage URL인지 확인
-    if (url.contains('firebasestorage.googleapis.com')) {
-      // alt=media 파라미터가 없으면 추가
-      if (!url.contains('alt=media')) {
-        final separator = url.contains('?') ? '&' : '?';
-        final sanitizedUrl = '$url${separator}alt=media';
-        debugPrint('🔧 [Hero Image] URL 수정: $sanitizedUrl');
-        return sanitizedUrl;
-      }
-    }
-
-    debugPrint('⚠️ [Hero Image] 알 수 없는 URL 형식: $url');
-    return url;
-  }
+class _ProfileImageState extends State<_ProfileImage> {
+  bool _hasLogged = false; // 로그 한 번만 찍기 위한 플래그
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // AboutMeController에서 프로필 이미지 가져오기
-    return GetBuilder<AboutMeController>(
-      init: AboutMeController(),
-      builder: (controller) {
+    // 🔥 중요: init 사용하지 않고 Get.find로 기존 컨트롤러 사용
+    // AboutMeController는 AboutMePage에서 이미 초기화됨
+    try {
+      final controller = Get.find<AboutMeController>();
+
+      return Obx(() {
         // 데이터 로딩 중이거나 없는 경우
         if (!controller.aboutMeFetching.value || controller.aboutMe == null) {
-          return _PlaceholderImage(size: size);
+          if (!_hasLogged) {
+            debugPrint('⏳ [Hero Image] 프로필 데이터 로딩 중...');
+            _hasLogged = true;
+          }
+          return _PlaceholderImage(size: widget.size);
         }
 
-        final originalUrl = controller.aboutMe!.profileImage;
-        final sanitizedUrl = _sanitizeImageUrl(originalUrl);
+        final profileImageUrl = controller.aboutMe!.profileImage;
 
-        debugPrint('📸 [Hero Image] 프로필 이미지 로드 시작');
-        debugPrint('🔗 [Hero Image] Original URL: $originalUrl');
-        debugPrint('🔗 [Hero Image] Sanitized URL: $sanitizedUrl');
+        // 로그는 단 한 번만 출력
+        if (!_hasLogged) {
+          debugPrint('📸 [Hero Image] 프로필 이미지 로드 시작');
+          debugPrint('🔗 [Hero Image] URL: $profileImageUrl');
+          _hasLogged = true;
+        }
 
         return Container(
-          width: size,
-          height: size,
+          width: widget.size,
+          height: widget.size,
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: theme.colorScheme.primary.withValues(alpha: 0.3),
-              width: 4,
-            ),
+            borderRadius: BorderRadius.circular(16.r), // 둥근 사각형
             boxShadow: [
+              // 자연스러운 그림자 (다층)
               BoxShadow(
-                color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                blurRadius: 30,
-                offset: const Offset(0, 10),
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
+              ),
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 40,
+                offset: const Offset(0, 8),
+              ),
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 60,
+                offset: const Offset(0, 12),
               ),
             ],
           ),
-          child: ClipOval(
-            child: Image.network(
-              sanitizedUrl,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16.r),
+            child: CachedNetworkImage(
+              imageUrl: profileImageUrl,
               fit: BoxFit.cover,
-              // HTTP 헤더 설정 없음 (브라우저 기본값 사용)
-              errorBuilder: (context, error, stackTrace) {
-                debugPrint('❌ [Hero Image] 이미지 로드 실패');
-                debugPrint('❌ [Hero Image] Error: $error');
-                debugPrint('❌ [Hero Image] StackTrace: $stackTrace');
-                return _ErrorPlaceholder(size: size);
+              placeholder: (context, url) {
+                return _LoadingPlaceholder(size: widget.size);
               },
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) {
+              errorWidget: (context, url, error) {
+                debugPrint('❌ [Hero Image] 이미지 로드 실패: $error');
+                return _ErrorPlaceholder(size: widget.size);
+              },
+              // 로드 완료 시 로그 (한 번만)
+              imageBuilder: (context, imageProvider) {
+                if (!_hasLogged) {
                   debugPrint('✅ [Hero Image] 이미지 로드 완료');
-                  return child;
                 }
-
-                final progress = loadingProgress.cumulativeBytesLoaded /
-                    (loadingProgress.expectedTotalBytes ?? 1);
-                debugPrint('⏳ [Hero Image] 로딩 중: ${(progress * 100).toStringAsFixed(0)}%');
-
-                return _LoadingPlaceholder(
-                  size: size,
-                  progress: progress,
+                return Image(
+                  image: imageProvider,
+                  fit: BoxFit.cover,
                 );
               },
             ),
           ),
         );
-      },
-    );
+      });
+    } catch (e) {
+      // AboutMeController가 아직 초기화되지 않은 경우
+      debugPrint('⚠️ [Hero Image] AboutMeController를 찾을 수 없습니다: $e');
+      return _PlaceholderImage(size: widget.size);
+    }
   }
 }
 
-/// 로딩 중 Placeholder (진행률 표시)
+/// 로딩 중 Placeholder
 class _LoadingPlaceholder extends StatelessWidget {
   final double size;
-  final double progress;
 
   const _LoadingPlaceholder({
     required this.size,
-    required this.progress,
   });
 
   @override
@@ -256,31 +148,17 @@ class _LoadingPlaceholder extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
+        borderRadius: BorderRadius.circular(16.r),
         color: theme.colorScheme.surfaceContainerHighest,
       ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // 진행률 표시
-          SizedBox(
-            width: size * 0.5,
-            height: size * 0.5,
-            child: CircularProgressIndicator(
-              value: progress,
-              color: theme.colorScheme.primary,
-              strokeWidth: 3,
-            ),
+      child: Center(
+        child: SizedBox(
+          width: size * 0.2,
+          height: size * 0.2,
+          child: PortfolioLoadingIndicator(
+            color: theme.colorScheme.primary,
           ),
-          // 퍼센트 텍스트
-          Text(
-            '${(progress * 100).toInt()}%',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -302,7 +180,7 @@ class _ErrorPlaceholder extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
+        borderRadius: BorderRadius.circular(16.r),
         color: theme.colorScheme.errorContainer,
       ),
       child: Column(
@@ -310,14 +188,15 @@ class _ErrorPlaceholder extends StatelessWidget {
         children: [
           Icon(
             Icons.person,
-            size: size * 0.4,
+            size: size * 0.3,
             color: theme.colorScheme.error,
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Text(
             '이미지 로드 실패',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.error,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -342,17 +221,17 @@ class _PlaceholderImage extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
+        borderRadius: BorderRadius.circular(16.r),
         color: theme.colorScheme.surfaceContainerHighest,
         border: Border.all(
           color: theme.colorScheme.outline.withValues(alpha: 0.2),
-          width: 4,
+          width: 1,
         ),
       ),
       child: Center(
         child: SizedBox(
-          width: size * 0.3,
-          height: size * 0.3,
+          width: size * 0.2,
+          height: size * 0.2,
           child: PortfolioLoadingIndicator(
             color: theme.colorScheme.primary,
           ),

@@ -165,7 +165,7 @@ class _ProjectCardState extends State<ProjectCard>
                             skills: widget.project.skills,
                             volumeColor: volumeColor,
                           ),
-                          SizedBox(height: constants.spacingM),
+                          SizedBox(height: constants.spacingL),
                           _ViewMoreButton(isHovered: _isHovered),
                         ],
                       ),
@@ -572,6 +572,7 @@ class _ViewMoreButton extends StatelessWidget {
     final constants = AppConstants.of(context);
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Icon(
           LucideIcons.externalLink,
