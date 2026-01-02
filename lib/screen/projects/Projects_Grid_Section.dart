@@ -135,16 +135,16 @@ class _ProjectsGrid extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: appController.responsive(
-            mobile: 1,
+            mobile: 2,
             tablet: 2,
             web: 3,
           ),
           crossAxisSpacing: constants.spacingL,
           mainAxisSpacing: constants.spacingL,
           childAspectRatio: appController.responsive(
-            mobile: 0.85,
-            tablet: 0.75,
-            web: 0.7,
+            mobile: 0.82,
+            tablet: 1.15,
+            web: 0.95,
           ),
         ),
         itemCount: projects.length,

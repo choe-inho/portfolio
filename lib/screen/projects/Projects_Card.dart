@@ -296,7 +296,7 @@ class _ThumbnailImage extends StatelessWidget {
               imageUrl: imageUrl,
               fit: BoxFit.cover,
               placeholder: (context, url) => _ImagePlaceholder(),
-              errorWidget: (context, url, error) => _ImageError(),
+              errorWidget: (context, url, error) => _ImageError(url, error),
             ),
           ),
           if (isHovered)
@@ -341,12 +341,13 @@ class _ImagePlaceholder extends StatelessWidget {
 }
 
 class _ImageError extends StatelessWidget {
-  const _ImageError();
+  const _ImageError(this.url, this.err);
+  final url;
+  final err;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Container(
       color: theme.colorScheme.surfaceVariant,
       child: Column(
