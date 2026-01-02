@@ -52,17 +52,17 @@ class _SocialLinks extends StatelessWidget {
     {
       'icon': LucideIcons.github,
       'label': 'GitHub',
-      'url': 'https://github.com',
+      'url': 'https://github.com/choe-inho',
     },
     {
-      'icon': LucideIcons.linkedin,
-      'label': 'LinkedIn',
-      'url': 'https://linkedin.com',
+      'icon': LucideIcons.externalLink,
+      'label': 'Blog',
+      'url': 'https://iconoding.tistory.com/',
     },
     {
       'icon': LucideIcons.mail,
       'label': 'Email',
-      'url': 'mailto:example@email.com',
+      'url': 'mailto:iconoding.dev@gmail.com',
     },
   ];
 
@@ -179,24 +179,35 @@ class _CopyrightText extends StatelessWidget {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
 
-    return Column(
-      children: [
-        Text(
-          '© 2025 Portfolio. All rights reserved.',
-          textAlign: TextAlign.center,
+    return RichText(
+        text: TextSpan(
+          text: '${DateTime.now().year} ',
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
+          children: [
+              TextSpan(
+              text: 'iconoding',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.primary,
+              )),
+            TextSpan(
+                text: ' Portfolio ',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              )),
+            TextSpan(
+                text: '/ Developed by ',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                )),
+            TextSpan(
+                text: 'FLUTTER',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                )),
+          ]
         ),
-        SizedBox(height: constants.spacingXS),
-        Text(
-          'Made with Flutter 💚',
-          textAlign: TextAlign.center,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-          ),
-        ),
-      ],
     );
   }
 }
