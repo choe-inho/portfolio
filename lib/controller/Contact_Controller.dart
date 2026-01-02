@@ -1,144 +1,304 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:portfolio/model/Contact.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ContactForm{
-  final IconData icon;
-  final String title;
-  final String value;
-  final String description;
-  final Color color;
-  final bool canCopy;
-  final VoidCallback onTap;
+/// Contact Model
+class Contact {
+  final String local;
+  final String city;
+  final String phone;
+  final String instagram;
 
-  ContactForm({
-    required this.icon,
-    required this.title,
-    required this.value,
-    required this.description,
-    required this.color,
-    required this.canCopy,
-    required this.onTap
+  Contact({
+    required this.local,
+    required this.city,
+    required this.phone,
+    required this.instagram,
   });
 
-  static Color toColor(String title){
-    switch(title){
-      case 'Email' : return
+  factory Contact.fromJson(Map<String, dynamic> map) {
+    return Contact(
+      local: map['local'] ?? '',
+      city: map['city'] ?? '',
+      phone: map['phone'] ?? '',
+      instagram: map['instagram'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'local': local,
+      'city': city,
+      'phone': phone,
+      'instagram': instagram,
+    };
+  }
+}
+
+/// Contact Controller
+/// Contact 정보 및 문의 폼 관리
+class ContactController extends GetxController {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Contact 정보 ID (고정)
+  static const String contactDocId = 'MfbG8A8QTzkVCx8qSz92';
+
+  // Contact 정보
+  final Rx<Contact?> contactInfo = Rx<Contact?>(null);
+
+  // 폼 컨트롤러
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final subjectController = TextEditingController();
+  final messageController = TextEditingController();
+
+  // 폼 키
+  final formKey = GlobalKey<FormState>();
+
+  // 로딩 상태
+  final fetching = false.obs; // Contact 정보 로딩
+  final isLoading = false.obs; // 폼 전송 로딩
+
+  // 전송 성공 여부
+  final isSubmitted = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    debugPrint('📧 [Contact Controller] 초기화');
+    _fetchContactInfo();
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    emailController.dispose();
+    subjectController.dispose();
+    messageController.dispose();
+    debugPrint('👋 [Contact Controller] onClose');
+    super.onClose();
+  }
+
+  /// Contact 정보 가져오기
+  Future<void> _fetchContactInfo() async {
+    try {
+      fetching.value = false;
+      debugPrint('📥 [Contact Controller] Contact 정보 가져오기 시작');
+
+      final doc = await _firestore
+          .collection('contact')
+          .doc(contactDocId)
+          .get();
+
+      if (doc.exists) {
+        contactInfo.value = Contact.fromJson(doc.data()!);
+        debugPrint('✅ [Contact Controller] Contact 정보 로드 완료');
+        debugPrint('   - 위치: ${contactInfo.value!.city}, ${contactInfo.value!.local}');
+        debugPrint('   - 전화: ${contactInfo.value!.phone}');
+        debugPrint('   - 인스타: ${contactInfo.value!.instagram}');
+      } else {
+        debugPrint('❌ [Contact Controller] Contact 문서가 존재하지 않음');
+        contactInfo.value = null;
+      }
+    } catch (e) {
+      debugPrint('❌ [Contact Controller] Contact 정보 가져오기 실패: $e');
+      contactInfo.value = null;
+    } finally {
+      fetching.value = true;
+    }
+  }
+
+  /// Contact 정보 새로고침
+  Future<void> refreshContactInfo() async {
+    debugPrint('🔄 [Contact Controller] Contact 정보 새로고침');
+    await _fetchContactInfo();
+  }
+
+  /// 폼 유효성 검사
+  bool validateForm() {
+    if (!formKey.currentState!.validate()) {
+      debugPrint('❌ [Contact Controller] 폼 유효성 검사 실패');
+      return false;
+    }
+    debugPrint('✅ [Contact Controller] 폼 유효성 검사 통과');
+    return true;
+  }
+
+  /// 메시지 전송
+  Future<bool> submitMessage() async {
+    if (!validateForm()) {
+      return false;
+    }
+
+    try {
+      isLoading.value = true;
+      debugPrint('📤 [Contact Controller] 메시지 전송 시작');
+
+      // Firestore에 문의 내역 저장
+      final contactData = {
+        'name': nameController.text.trim(),
+        'email': emailController.text.trim(),
+        'subject': subjectController.text.trim(),
+        'message': messageController.text.trim(),
+        'timestamp': FieldValue.serverTimestamp(),
+        'isRead': false,
+        'status': 'pending', // pending, replied, archived
+      };
+
+      await _firestore.collection('contacts').add(contactData);
+
+      debugPrint('✅ [Contact Controller] Firestore 저장 완료');
+
+      // TODO: 실제 이메일 전송 로직
+      await _sendEmail(contactData);
+
+      // 성공 상태 업데이트
+      isSubmitted.value = true;
+      clearForm();
+
+      debugPrint('✅ [Contact Controller] 메시지 전송 완료');
+      return true;
+    } catch (e) {
+      debugPrint('❌ [Contact Controller] 메시지 전송 실패: $e');
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// 이메일 전송 (실제 구현 필요)
+  Future<void> _sendEmail(Map<String, dynamic> data) async {
+    // TODO: 실제 이메일 전송 로직 구현
+
+    // 옵션 1: EmailJS
+    // 옵션 2: Firebase Functions
+    // 옵션 3: Node.js 백엔드
+
+    // 임시: 2초 지연
+    await Future.delayed(const Duration(seconds: 2));
+    debugPrint('📧 [Contact Controller] 이메일 전송 완료 (시뮬레이션)');
+  }
+
+  /// 폼 초기화
+  void clearForm() {
+    formKey.currentState?.reset();
+    nameController.clear();
+    emailController.clear();
+    subjectController.clear();
+    messageController.clear();
+    debugPrint('🔄 [Contact Controller] 폼 초기화 완료');
+  }
+
+  /// 문의 내역 조회 (관리자용)
+  Stream<List<ContactMessage>> getContactMessages() {
+    debugPrint('📋 [Contact Controller] 문의 내역 조회 시작');
+
+    return _firestore
+        .collection('contacts')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return ContactMessage.fromFirestore(doc);
+      }).toList();
+    });
+  }
+
+  /// 문의 읽음 처리 (관리자용)
+  Future<void> markAsRead(String messageId) async {
+    try {
+      await _firestore.collection('contacts').doc(messageId).update({
+        'isRead': true,
+        'readAt': FieldValue.serverTimestamp(),
+      });
+      debugPrint('✅ [Contact Controller] 읽음 처리 완료: $messageId');
+    } catch (e) {
+      debugPrint('❌ [Contact Controller] 읽음 처리 실패: $e');
+    }
+  }
+
+  /// 문의 상태 변경 (관리자용)
+  Future<void> updateStatus(String messageId, String status) async {
+    try {
+      await _firestore.collection('contacts').doc(messageId).update({
+        'status': status,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      debugPrint('✅ [Contact Controller] 상태 변경 완료: $messageId -> $status');
+    } catch (e) {
+      debugPrint('❌ [Contact Controller] 상태 변경 실패: $e');
+    }
+  }
+
+  /// Contact 정보 업데이트 (관리자용)
+  Future<bool> updateContactInfo(Contact newContact) async {
+    try {
+      debugPrint('📝 [Contact Controller] Contact 정보 업데이트 시작');
+
+      await _firestore
+          .collection('contact')
+          .doc(contactDocId)
+          .update(newContact.toJson());
+
+      // 로컬 상태 업데이트
+      contactInfo.value = newContact;
+
+      debugPrint('✅ [Contact Controller] Contact 정보 업데이트 완료');
+      return true;
+    } catch (e) {
+      debugPrint('❌ [Contact Controller] Contact 정보 업데이트 실패: $e');
+      return false;
     }
   }
 }
 
-class ContactController extends GetxController{
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+/// Contact 메시지 모델 (문의 내역)
+class ContactMessage {
+  final String id;
+  final String name;
+  final String email;
+  final String subject;
+  final String message;
+  final DateTime timestamp;
+  final bool isRead;
+  final String status;
 
-  @override
-  void onInit() {
-    // TODO: implement onInit
-    fetchContact();
-    super.onInit();
+  ContactMessage({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.subject,
+    required this.message,
+    required this.timestamp,
+    required this.isRead,
+    required this.status,
+  });
+
+  /// Firestore에서 데이터 가져오기
+  factory ContactMessage.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return ContactMessage(
+      id: doc.id,
+      name: data['name'] ?? '',
+      email: data['email'] ?? '',
+      subject: data['subject'] ?? '',
+      message: data['message'] ?? '',
+      timestamp: (data['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      isRead: data['isRead'] ?? false,
+      status: data['status'] ?? 'pending',
+    );
   }
 
-  RxBool fetching = false.obs;
-  Contact? contact;
-
-  static final List<Map<String, dynamic>> _contactData = [
-    {
-      'icon': LucideIcons.mail,
-      'title': 'Email',
-      'value': 'iconoding.dev@gmail.com',
-      'description': '이메일로 문의하기',
-      'color': (BuildContext context) => Theme.of(context).colorScheme.primary,
-      'canCopy': true,
-      'onTap': () async {
-        final uri = Uri.parse('mailto:iconoding.dev@gmail.com');
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri);
-        }
-      },
-    },
-    {
-      'icon': LucideIcons.github,
-      'title': 'GitHub',
-      'value': 'github.com/choe-inho',
-      'description': '프로젝트 코드 보기',
-      'color': (BuildContext context) => Theme.of(context).colorScheme.secondary,
-      'canCopy': false,
-      'onTap': () async {
-        final uri = Uri.parse('https://github.com/choe-inho');
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-      },
-    },
-    {
-      'icon': LucideIcons.externalLink,
-      'title': 'Blog',
-      'value': 'iconoding.tistory.com',
-      'description': '기술 블로그 방문하기',
-      'color': (BuildContext context) => Theme.of(context).colorScheme.tertiary,
-      'canCopy': false,
-      'onTap': () async {
-        final uri = Uri.parse('https://iconoding.tistory.com/');
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-      },
-    },
-    {
-      'icon': LucideIcons.phone,
-      'title': 'Phone',
-      'value': '010-1234-5678',
-      'description': '전화 문의하기',
-      'color': (BuildContext context) => Theme.of(context).colorScheme.success,
-      'canCopy': true,
-      'onTap': () async {
-        final uri = Uri.parse('tel:010-1234-5678');
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri);
-        }
-      },
-    },
-    {
-      'icon': LucideIcons.linkedin,
-      'title': 'LinkedIn',
-      'value': 'linkedin.com/in/yourprofile',
-      'description': '프로페셔널 네트워크',
-      'color': (BuildContext context) => const Color(0xFF0A66C2),
-      'canCopy': false,
-      'onTap': () async {
-        final uri = Uri.parse('https://linkedin.com/in/yourprofile');
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-      },
-    },
-    {
-      'icon': LucideIcons.mapPin,
-      'title': 'Location',
-      'value': '서울, 대한민국',
-      'description': '현재 위치',
-      'color': (BuildContext context) => Theme.of(context).colorScheme.error,
-      'canCopy': false,
-      'onTap': () async {
-        // 위치 관련 동작 (예: 구글 맵 열기)
-      },
-    },
-  ];
-  Future<void> fetchContact() async{
-    try{
-      final res = await _firestore.collection('contact').doc('MfbG8A8QTzkVCx8qSz92').get();
-      final data = res.data();
-      if(data == null){
-        throw Exception('불러온 데이터 없음');
-      }else{
-        contact = Contact.fromJson(data);
-        update();
-      }
-    }catch(err){
-      debugPrint('[Contact Controller] 데이터 불러오기 실패:$err');
-    }finally{
-      fetching.value = true;
-    }
+  /// Firestore에 저장할 Map으로 변환
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'email': email,
+      'subject': subject,
+      'message': message,
+      'timestamp': FieldValue.serverTimestamp(),
+      'isRead': isRead,
+      'status': status,
+    };
   }
 }

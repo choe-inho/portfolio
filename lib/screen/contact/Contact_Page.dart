@@ -20,13 +20,17 @@ class _ContactPageState extends State<ContactPage> {
   int _currentNavIndex = 3; // Contact 페이지는 인덱스 3
   final ScrollController _scrollController = ScrollController();
   late ContactController _contactController;
+
   @override
   void initState() {
     super.initState();
+
+    // ContactController 초기화 (빌드 전에 완료)
+    _contactController = Get.put(ContactController());
+
     // 현재 라우트에 따라 네비게이션 인덱스 설정
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentRoute = Get.currentRoute;
-      _contactController = Get.put(ContactController());
       setState(() {
         _currentNavIndex = AppRoutes.getIndexByRoute(currentRoute);
       });
@@ -36,6 +40,7 @@ class _ContactPageState extends State<ContactPage> {
   @override
   void dispose() {
     _scrollController.dispose();
+    // ContactController는 GetX가 자동으로 관리하므로 별도 dispose 불필요
     super.dispose();
   }
 

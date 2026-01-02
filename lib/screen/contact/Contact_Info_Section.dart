@@ -26,10 +26,17 @@ class ContactInfoSection extends StatelessWidget {
         vertical: constants.spacingXXL,
       ),
       child: Obx(() {
-
-        if(!contactController.fetching.value){
-          return LoadingState(loading: '연락처 불러오는 중...');
+        // 로딩 중일 때
+        if (!contactController.fetching.value) {
+          return const LoadingState(loading: '연락처 불러오는 중...');
         }
+
+        // 데이터가 없을 때
+        if (contactController.contactInfo.value == null) {
+          return _ErrorView();
+        }
+
+        final contact = contactController.contactInfo.value!;
 
         return Column(
           children: [
@@ -59,9 +66,9 @@ class ContactInfoSection extends StatelessWidget {
                   web: 1.1,
                 ),
               ),
-              itemCount: _contactData.length,
+              itemCount: _buildContactData(contact).length,
               itemBuilder: (context, index) {
-                final data = _contactData[index];
+                final data = _buildContactData(contact)[index];
                 return SlideInAnimation(
                   delay: Duration(milliseconds: 500 + (index * 150)),
                   child: _ContactCard(
@@ -80,6 +87,100 @@ class ContactInfoSection extends StatelessWidget {
         );
       }),
     );
+  }
+
+  /// Firestore에서 가져온 Contact 데이터로 카드 데이터 생성
+  List<Map<String, dynamic>> _buildContactData(Contact contact) {
+    return [
+      {
+        'icon': LucideIcons.mail,
+        'title': 'Email',
+        'value': 'iconoding.dev@gmail.com',
+        'description': '이메일로 문의하기',
+        'color': (BuildContext context) => Theme.of(context).colorScheme.primary,
+        'canCopy': true,
+        'onTap': () async {
+          final uri = Uri.parse('mailto:iconoding.dev@gmail.com');
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+          }
+        },
+      },
+      {
+        'icon': LucideIcons.github,
+        'title': 'GitHub',
+        'value': 'github.com/choe-inho',
+        'description': '프로젝트 코드 보기',
+        'color': (BuildContext context) => Theme.of(context).colorScheme.secondary,
+        'canCopy': false,
+        'onTap': () async {
+          final uri = Uri.parse('https://github.com/choe-inho');
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        },
+      },
+      {
+        'icon': LucideIcons.externalLink,
+        'title': 'Blog',
+        'value': 'iconoding.tistory.com',
+        'description': '기술 블로그 방문하기',
+        'color': (BuildContext context) => Theme.of(context).colorScheme.tertiary,
+        'canCopy': false,
+        'onTap': () async {
+          final uri = Uri.parse('https://iconoding.tistory.com/');
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        },
+      },
+      {
+        'icon': LucideIcons.phone,
+        'title': 'Phone',
+        'value': contact.phone,
+        'description': '전화 문의하기',
+        'color': (BuildContext context) => Theme.of(context).colorScheme.success,
+        'canCopy': true,
+        'onTap': () async {
+          final uri = Uri.parse('tel:${contact.phone}');
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+          }
+        },
+      },
+      {
+        'icon': LucideIcons.instagram,
+        'title': 'Instagram',
+        'value': contact.instagram,
+        'description': '인스타그램 팔로우',
+        'color': (BuildContext context) => const Color(0xFFE4405F),
+        'canCopy': false,
+        'onTap': () async {
+          // Instagram URL 처리 (@ 제거)
+          final username = contact.instagram.replaceAll('@', '');
+          final uri = Uri.parse('https://instagram.com/$username');
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        },
+      },
+      {
+        'icon': LucideIcons.mapPin,
+        'title': 'Location',
+        'value': '${contact.city}, ${contact.local}',
+        'description': '현재 위치',
+        'color': (BuildContext context) => Theme.of(context).colorScheme.error,
+        'canCopy': false,
+        'onTap': () async {
+          // 구글 맵으로 위치 검색
+          final query = Uri.encodeComponent('${contact.city}, ${contact.local}');
+          final uri = Uri.parse('https://www.google.com/maps/search/?api=1&query=$query');
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        },
+      },
+    ];
   }
 }
 
@@ -122,6 +223,47 @@ class _SectionTitle extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// 에러 뷰
+class _ErrorView extends StatelessWidget {
+  const _ErrorView();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final constants = AppConstants.of(context);
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(constants.spacingXL),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              LucideIcons.alertCircle,
+              size: 64.r,
+              color: theme.colorScheme.error,
+            ),
+            SizedBox(height: constants.spacingM),
+            Text(
+              '연락처 정보를 불러올 수 없습니다',
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: theme.colorScheme.error,
+              ),
+            ),
+            SizedBox(height: constants.spacingS),
+            Text(
+              '잠시 후 다시 시도해주세요',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -365,7 +507,9 @@ class _CardIcon extends StatelessWidget {
         web: 80.r,
       ),
       decoration: BoxDecoration(
-        color: isHovered ? color.withValues(alpha: 0.2) : color.withValues(alpha: 0.1),
+        color: isHovered
+            ? color.withValues(alpha: 0.2)
+            : color.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
       child: Center(

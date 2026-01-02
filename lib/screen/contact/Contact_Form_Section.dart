@@ -3,81 +3,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:portfolio/controller/App_Controller.dart';
+import 'package:portfolio/controller/Contact_Controller.dart';
 import 'package:portfolio/util/animation/Portfolio_Animation.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:portfolio/util/theme/App_Colors.dart';
 
-class ContactFormSection extends StatefulWidget {
+class ContactFormSection extends StatelessWidget {
   const ContactFormSection({super.key});
-
-  @override
-  State<ContactFormSection> createState() => _ContactFormSectionState();
-}
-
-class _ContactFormSectionState extends State<ContactFormSection> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _subjectController = TextEditingController();
-  final _messageController = TextEditingController();
-
-  bool _isLoading = false;
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _subjectController.dispose();
-    _messageController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _submitForm() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    // TODO: 실제 이메일 전송 로직 구현
-    // 예: Firebase Functions, EmailJS, 또는 백엔드 API 호출
-    await Future.delayed(const Duration(seconds: 2));
-
-    setState(() => _isLoading = false);
-
-    if (mounted) {
-      // 성공 메시지
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(
-                LucideIcons.checkCircle,
-                color: Colors.white,
-                size: 20.r,
-              ),
-              SizedBox(width: 8.w),
-              const Text('메시지가 성공적으로 전송되었습니다!'),
-            ],
-          ),
-          backgroundColor: Theme.of(context).colorScheme.success,
-          duration: const Duration(seconds: 3),
-        ),
-      );
-
-      // 폼 초기화
-      _formKey.currentState!.reset();
-      _nameController.clear();
-      _emailController.clear();
-      _subjectController.clear();
-      _messageController.clear();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final contactController = Get.find<ContactController>();
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -100,15 +38,7 @@ class _ContactFormSectionState extends State<ContactFormSection> {
           // 폼 컨테이너
           SlideInAnimation(
             delay: const Duration(milliseconds: 500),
-            child: _FormContainer(
-              formKey: _formKey,
-              nameController: _nameController,
-              emailController: _emailController,
-              subjectController: _subjectController,
-              messageController: _messageController,
-              isLoading: _isLoading,
-              onSubmit: _submitForm,
-            ),
+            child: _FormContainer(controller: contactController),
           ),
         ],
       ),
@@ -161,23 +91,65 @@ class _SectionTitle extends StatelessWidget {
 
 /// 폼 컨테이너
 class _FormContainer extends StatelessWidget {
-  final GlobalKey<FormState> formKey;
-  final TextEditingController nameController;
-  final TextEditingController emailController;
-  final TextEditingController subjectController;
-  final TextEditingController messageController;
-  final bool isLoading;
-  final VoidCallback onSubmit;
+  final ContactController controller;
 
-  const _FormContainer({
-    required this.formKey,
-    required this.nameController,
-    required this.emailController,
-    required this.subjectController,
-    required this.messageController,
-    required this.isLoading,
-    required this.onSubmit,
-  });
+  const _FormContainer({required this.controller});
+
+  Future<void> _handleSubmit(BuildContext context) async {
+    final success = await controller.submitMessage();
+
+    if (!context.mounted) return;
+
+    if (success) {
+      // 성공 메시지
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(
+                LucideIcons.checkCircle,
+                color: Colors.white,
+                size: 20.r,
+              ),
+              SizedBox(width: 8.w),
+              const Expanded(
+                child: Text(
+                  '메시지가 성공적으로 전송되었습니다!\n빠른 시일 내에 답변드리겠습니다.',
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Theme.of(context).colorScheme.success,
+          duration: const Duration(seconds: 4),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(16.r),
+        ),
+      );
+    } else {
+      // 실패 메시지
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(
+                LucideIcons.xCircle,
+                color: Colors.white,
+                size: 20.r,
+              ),
+              SizedBox(width: 8.w),
+              const Expanded(
+                child: Text('메시지 전송에 실패했습니다. 다시 시도해주세요.'),
+              ),
+            ],
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(16.r),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -213,22 +185,24 @@ class _FormContainer extends StatelessWidget {
           ],
         ),
         child: Form(
-          key: formKey,
+          key: controller.formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // 이름 & 이메일 (반응형)
               Obx(() {
+                final isLoading = controller.isLoading.value;
+
                 if (appController.isMobile) {
                   return Column(
                     children: [
                       _NameField(
-                        controller: nameController,
+                        controller: controller.nameController,
                         enabled: !isLoading,
                       ),
                       SizedBox(height: constants.spacingM),
                       _EmailField(
-                        controller: emailController,
+                        controller: controller.emailController,
                         enabled: !isLoading,
                       ),
                     ],
@@ -238,14 +212,14 @@ class _FormContainer extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _NameField(
-                          controller: nameController,
+                          controller: controller.nameController,
                           enabled: !isLoading,
                         ),
                       ),
                       SizedBox(width: constants.spacingM),
                       Expanded(
                         child: _EmailField(
-                          controller: emailController,
+                          controller: controller.emailController,
                           enabled: !isLoading,
                         ),
                       ),
@@ -257,26 +231,26 @@ class _FormContainer extends StatelessWidget {
               SizedBox(height: constants.spacingM),
 
               // 제목
-              _SubjectField(
-                controller: subjectController,
-                enabled: !isLoading,
-              ),
+              Obx(() => _SubjectField(
+                controller: controller.subjectController,
+                enabled: !controller.isLoading.value,
+              )),
 
               SizedBox(height: constants.spacingM),
 
               // 메시지
-              _MessageField(
-                controller: messageController,
-                enabled: !isLoading,
-              ),
+              Obx(() => _MessageField(
+                controller: controller.messageController,
+                enabled: !controller.isLoading.value,
+              )),
 
               SizedBox(height: constants.spacingXL),
 
               // 제출 버튼
-              _SubmitButton(
-                isLoading: isLoading,
-                onPressed: onSubmit,
-              ),
+              Obx(() => _SubmitButton(
+                isLoading: controller.isLoading.value,
+                onPressed: () => _handleSubmit(context),
+              )),
             ],
           ),
         ),
@@ -303,15 +277,21 @@ class _NameField extends StatelessWidget {
       controller: controller,
       enabled: enabled,
       decoration: InputDecoration(
-        labelText: '이름',
+        labelText: '이름 *',
         hintText: '홍길동',
-        prefixIcon: Icon(LucideIcons.user),
+        prefixIcon: Icon(
+          LucideIcons.user,
+          color: enabled ? null : theme.colorScheme.onSurface.withValues(alpha: 0.38),
+        ),
         filled: true,
         fillColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.5),
       ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return '이름을 입력해주세요';
+        }
+        if (value.trim().length < 2) {
+          return '이름은 2자 이상 입력해주세요';
         }
         return null;
       },
@@ -338,9 +318,12 @@ class _EmailField extends StatelessWidget {
       enabled: enabled,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
-        labelText: '이메일',
+        labelText: '이메일 *',
         hintText: 'example@email.com',
-        prefixIcon: Icon(LucideIcons.mail),
+        prefixIcon: Icon(
+          LucideIcons.mail,
+          color: enabled ? null : theme.colorScheme.onSurface.withValues(alpha: 0.38),
+        ),
         filled: true,
         fillColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.5),
       ),
@@ -348,7 +331,9 @@ class _EmailField extends StatelessWidget {
         if (value == null || value.trim().isEmpty) {
           return '이메일을 입력해주세요';
         }
-        if (!value.contains('@')) {
+        // 이메일 정규식 검증
+        final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+        if (!emailRegex.hasMatch(value.trim())) {
           return '올바른 이메일 형식이 아닙니다';
         }
         return null;
@@ -375,15 +360,21 @@ class _SubjectField extends StatelessWidget {
       controller: controller,
       enabled: enabled,
       decoration: InputDecoration(
-        labelText: '제목',
+        labelText: '제목 *',
         hintText: '문의 제목을 입력하세요',
-        prefixIcon: Icon(LucideIcons.fileText),
+        prefixIcon: Icon(
+          LucideIcons.fileText,
+          color: enabled ? null : theme.colorScheme.onSurface.withValues(alpha: 0.38),
+        ),
         filled: true,
         fillColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.5),
       ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return '제목을 입력해주세요';
+        }
+        if (value.trim().length < 5) {
+          return '제목은 5자 이상 입력해주세요';
         }
         return null;
       },
@@ -409,16 +400,21 @@ class _MessageField extends StatelessWidget {
       controller: controller,
       enabled: enabled,
       maxLines: 8,
+      maxLength: 1000,
       decoration: InputDecoration(
-        labelText: '메시지',
+        labelText: '메시지 *',
         hintText: '문의 내용을 자세히 작성해주세요',
         prefixIcon: Padding(
           padding: EdgeInsets.only(bottom: 120.h),
-          child: Icon(LucideIcons.messageSquare),
+          child: Icon(
+            LucideIcons.messageSquare,
+            color: enabled ? null : theme.colorScheme.onSurface.withValues(alpha: 0.38),
+          ),
         ),
         filled: true,
         fillColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.5),
         alignLabelWithHint: true,
+        helperText: '최소 10자 이상 입력해주세요',
       ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
@@ -458,7 +454,7 @@ class _SubmitButtonState extends State<_SubmitButton> {
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      cursor: SystemMouseCursors.click,
+      cursor: widget.isLoading ? SystemMouseCursors.wait : SystemMouseCursors.click,
       child: AnimatedContainer(
         duration: constants.fastAnimation,
         transform: Matrix4.identity()
@@ -470,7 +466,8 @@ class _SubmitButtonState extends State<_SubmitButton> {
               horizontal: constants.spacingXL,
               vertical: constants.spacingL,
             ),
-            elevation: _isHovered ? 8 : 4,
+            elevation: _isHovered && !widget.isLoading ? 8 : 4,
+            shadowColor: theme.colorScheme.primary.withValues(alpha: 0.4),
           ),
           icon: widget.isLoading
               ? SizedBox(
