@@ -51,11 +51,11 @@ class _HeroPageState extends State<HeroPage> {
   }
 
   void _handleViewProjects() {
-    _handleNavigationItemSelected(3); // Projects 페이지로 이동
+    _handleNavigationItemSelected(2); // Projects 페이지로 이동
   }
 
   void _handleContact() {
-    _handleNavigationItemSelected(4); // Contact 페이지로 이동
+    _handleNavigationItemSelected(3); // Contact 페이지로 이동
   }
 
   @override

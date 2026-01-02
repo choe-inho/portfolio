@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:portfolio/Portfolio.dart';
 import 'package:portfolio/controller/About_Me_Controller.dart';
+import 'package:portfolio/controller/Admin_Contoller.dart';
 import 'package:portfolio/controller/App_Controller.dart';
 import 'firebase_options.dart';
 import 'Error_Fall_Back_Web.dart';
@@ -62,7 +63,7 @@ void _initializeControllers() {
   // permanent: true로 설정하여 앱이 종료될 때까지 유지
   Get.put(AppController(), permanent: true);
   Get.put(AboutMeController(), permanent: true);
-
+  Get.put(AdminController(), permanent: true);
   debugPrint('✅ [Main] GetX 컨트롤러 초기화 완료');
 
   // AppController 초기화 확인

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:portfolio/controller/Contact_Controller.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:portfolio/util/route/App_Routes.dart';
+import '../../controller/Admin_Contoller.dart';
 import '../common/Portfoil_Footer.dart';
 import '../common/Portfolio_Navigation_Bar.dart' as nav;
 import 'Contact_Header.dart';
@@ -40,7 +43,6 @@ class _ContactPageState extends State<ContactPage> {
   @override
   void dispose() {
     _scrollController.dispose();
-    // ContactController는 GetX가 자동으로 관리하므로 별도 dispose 불필요
     super.dispose();
   }
 
@@ -69,6 +71,10 @@ class _ContactPageState extends State<ContactPage> {
         currentIndex: _currentNavIndex,
         onItemSelected: _handleNavigationItemSelected,
       ),
+
+      // ⭐ FloatingActionButton 추가 (관리자만 표시)
+      floatingActionButton: _AdminFloatingButton(),
+
       body: Column(
         children: [
           // 네비게이션 바
@@ -112,5 +118,74 @@ class _ContactPageState extends State<ContactPage> {
         ],
       ),
     );
+  }
+}
+
+/// 관리자 전용 FloatingActionButton
+class _AdminFloatingButton extends StatefulWidget {
+  const _AdminFloatingButton();
+
+  @override
+  State<_AdminFloatingButton> createState() => _AdminFloatingButtonState();
+}
+
+class _AdminFloatingButtonState extends State<_AdminFloatingButton> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final adminController = Get.find<AdminController>();
+    final theme = Theme.of(context);
+
+    return Obx(() {
+      // 로그인된 사용자만 버튼 표시
+      if (!adminController.isLoggedIn.value) {
+        return const SizedBox.shrink();
+      }
+
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            // 관리자 권한 확인
+            if (adminController.isAdmin.value) {
+              Get.toNamed(AppRoutes.contactAdmin);
+            } else {
+              // 권한 없음 메시지
+              Get.snackbar(
+                '접근 제한',
+                '관리자 권한이 필요합니다',
+                snackPosition: SnackPosition.TOP,
+                backgroundColor: theme.colorScheme.error,
+                colorText: theme.colorScheme.onError,
+                duration: const Duration(seconds: 2),
+              );
+            }
+          },
+          icon: Icon(
+            adminController.isAdmin.value
+                ? LucideIcons.settings
+                : LucideIcons.lock,
+            size: 20.r,
+          ),
+          label: AnimatedSize(
+            duration: const Duration(milliseconds: 300),
+            child: Text(
+              _isExpanded
+                  ? (adminController.isAdmin.value ? '문의 관리' : '권한 없음')
+                  : '관리',
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          backgroundColor: adminController.isAdmin.value
+              ? theme.colorScheme.primary
+              : theme.colorScheme.secondary,
+          elevation: 8,
+        ),
+      );
+    });
   }
 }

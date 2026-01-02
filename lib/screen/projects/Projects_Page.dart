@@ -30,7 +30,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
   void initState() {
     super.initState();
     _projectsController = Get.put(ProjectsController());
-    _adminController = Get.put(AdminController(), permanent: true);
+    _adminController = Get.find<AdminController>();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentRoute = Get.currentRoute;
