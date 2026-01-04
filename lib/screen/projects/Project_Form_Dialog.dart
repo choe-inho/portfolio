@@ -1,4 +1,4 @@
-// lib/screen/project/Project_Form_Dialog_With_Upload.dart
+// lib/screen/project/Project_Form_Dialog.dart
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -314,22 +314,8 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
 
                       SizedBox(height: constants.spacingM),
 
-                      // Notion URL
-                      _buildTextField(
-                        controller: _notionController,
-                        label: 'Notion 페이지 URL',
-                        hint: 'https://notion.so/...',
-                        icon: LucideIcons.link,
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Notion URL을 입력해주세요';
-                          }
-                          if (!value.startsWith('http')) {
-                            return '올바른 URL을 입력해주세요';
-                          }
-                          return null;
-                        },
-                      ),
+                      // Notion URL 또는 메시지 (수정됨!)
+                      _buildNotionField(theme, constants),
 
                       SizedBox(height: constants.spacingL),
 
@@ -576,6 +562,80 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
           ],
         ),
       ),
+    );
+  }
+
+  /// Notion URL 또는 메시지 필드 (수정됨!)
+  Widget _buildNotionField(ThemeData theme, AppConstants constants) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              LucideIcons.link,
+              size: constants.smallIconSize(context),
+              color: theme.colorScheme.primary,
+            ),
+            SizedBox(width: constants.spacingS),
+            Text(
+              'Notion URL 또는 안내 메시지',
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: constants.spacingS),
+        TextFormField(
+          controller: _notionController,
+          decoration: InputDecoration(
+            hintText: 'URL 또는 안내 메시지를 입력하세요',
+            helperText: '• URL: https://notion.so/page\n'
+                '• 메시지: 현재 개발 중입니다',
+            helperMaxLines: 2,
+            filled: true,
+            fillColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.3),
+          ),
+          maxLines: 3, // 여러 줄 입력 가능
+          validator: (value) {
+            // ✅ URL 검증 제거! 비어있지만 않으면 OK
+            if (value == null || value.trim().isEmpty) {
+              return 'URL 또는 메시지를 입력해주세요';
+            }
+            return null;
+          },
+          enabled: !_isLoading,
+        ),
+        SizedBox(height: constants.spacingS),
+        // 입력 가이드
+        Container(
+          padding: EdgeInsets.all(constants.spacingM),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primaryContainer.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(constants.borderRadius(context)),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                LucideIcons.info,
+                size: 16.r,
+                color: theme.colorScheme.primary,
+              ),
+              SizedBox(width: constants.spacingS),
+              Expanded(
+                child: Text(
+                  'URL 입력 시 브라우저로 열리고, 메시지 입력 시 다이얼로그로 표시됩니다',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
