@@ -114,6 +114,6 @@ Future<void> _initializeWebSettings() async{
 
     debugPrint('✅ [Main] 기본 설정 초기화 완료');
   } catch (e) {
-    debugPrint('⚠️ [Main] 기본 설정 초기화 실패 (무시됨): $e');
+    debugPrint('⚠️ [Main] 기본 설정 초기화 실패: $e');
   }
 }
