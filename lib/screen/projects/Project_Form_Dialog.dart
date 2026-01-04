@@ -865,7 +865,7 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
               ),
             )
                 : Icon(LucideIcons.check, size: 18.r),
-            label: Text(_isLoading ? '저장 중...' : '저장'),
+            label: Text(_isLoading ? '저장 중..' : '저장'),
           ),
         ],
       ),
