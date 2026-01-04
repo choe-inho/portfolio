@@ -62,13 +62,99 @@ class _ProjectCardState extends State<ProjectCard>
     }
   }
 
-  Future<void> _openNotionLink() async {
-    final uri = Uri.parse(widget.project.notion);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      debugPrint('Could not launch ${widget.project.notion}');
+  /// 카드 클릭 핸들러 (URL vs 메시지 자동 구분)
+  Future<void> _handleCardTap() async {
+    final content = widget.project.notion;
+
+    debugPrint('🖱️ [ProjectCard] 카드 클릭');
+    debugPrint('📝 [ProjectCard] 내용: $content');
+
+    // 비어있으면 기본 메시지
+    if (content.isEmpty) {
+      debugPrint('⚠️ [ProjectCard] 내용 없음');
+      _showMessageDialog('프로젝트 상세 정보가 준비되지 않았습니다.\n조금만 기다려주세요!');
+      return;
     }
+
+    // URL인지 확인
+    if (_isUrl(content)) {
+      debugPrint('🔗 [ProjectCard] URL로 인식 - 실행');
+      await _openNotionLink();
+    } else {
+      debugPrint('💬 [ProjectCard] 메시지로 인식 - 다이얼로그');
+      _showMessageDialog(content);
+    }
+  }
+
+  /// URL 여부 확인
+  bool _isUrl(String text) {
+    final urlPattern = RegExp(
+      r'^(https?:\/\/)' // http:// 또는 https://
+      r'(www\.)?' // www. (선택)
+      r'[-a-zA-Z0-9@:%._\+~#=]{1,256}' // 도메인
+      r'\.[a-zA-Z0-9()]{1,6}' // .com, .io 등
+      r'\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$', // 경로
+      caseSensitive: false,
+    );
+    return urlPattern.hasMatch(text);
+  }
+
+  /// 메시지 다이얼로그 표시
+  void _showMessageDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => _MessageDialog(
+        title: widget.project.title,
+        message: message,
+      ),
+    );
+  }
+
+  /// URL 실행
+  Future<void> _openNotionLink() async {
+    try {
+      final uri = Uri.parse(widget.project.notion);
+
+      if (!await canLaunchUrl(uri)) {
+        debugPrint('❌ Cannot launch URL: ${widget.project.notion}');
+        _showErrorDialog(
+          '페이지를 열 수 없습니다',
+          '이 URL을 열 수 없습니다.\n브라우저가 설치되어 있는지 확인해주세요.',
+        );
+        return;
+      }
+
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+
+      if (!launched) {
+        debugPrint('❌ Failed to launch URL: ${widget.project.notion}');
+        _showErrorDialog(
+          '페이지 열기 실패',
+          '페이지를 여는 중 오류가 발생했습니다.\n다시 시도해주세요.',
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Error launching URL: $e');
+      _showErrorDialog(
+        '오류 발생',
+        'URL을 여는 중 오류가 발생했습니다.\n\n에러: $e',
+      );
+    }
+  }
+
+  /// 에러 다이얼로그 표시
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => _MessageDialog(
+        title: title,
+        message: message,
+        isError: true,
+      ),
+    );
   }
 
   /// 관리자 권한 확인 후 수정 다이얼로그 표시
@@ -112,7 +198,7 @@ class _ProjectCardState extends State<ProjectCard>
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: GestureDetector(
-          onTap: _openNotionLink,
+          onTap: _handleCardTap, // ← 변경됨!
           child: Stack(
             children: [
               AnimatedContainer(
@@ -178,6 +264,117 @@ class _ProjectCardState extends State<ProjectCard>
               _EditButton(onPressed: _showEditDialog),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 메시지 다이얼로그 (신규 추가)
+class _MessageDialog extends StatelessWidget {
+  final String title;
+  final String message;
+  final bool isError;
+
+  const _MessageDialog({
+    required this.title,
+    required this.message,
+    this.isError = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final constants = AppConstants.of(context);
+
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(constants.largeBorderRadius(context)),
+      ),
+      child: Container(
+        constraints: BoxConstraints(maxWidth: 400.w),
+        padding: EdgeInsets.all(constants.spacingL),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 아이콘
+            Container(
+              padding: EdgeInsets.all(16.r),
+              decoration: BoxDecoration(
+                color: (isError
+                    ? theme.colorScheme.errorContainer
+                    : theme.colorScheme.primaryContainer)
+                    .withValues(alpha: 0.3),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isError ? LucideIcons.alertCircle : LucideIcons.info,
+                size: 48.r,
+                color: isError
+                    ? theme.colorScheme.error
+                    : theme.colorScheme.primary,
+              ),
+            ),
+
+            SizedBox(height: constants.spacingL),
+
+            // 제목
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: isError
+                    ? theme.colorScheme.error
+                    : theme.colorScheme.onSurface,
+              ),
+            ),
+
+            SizedBox(height: constants.spacingM),
+
+            // 메시지
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(constants.spacingM),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceVariant.withValues(alpha: 0.5),
+                borderRadius:
+                BorderRadius.circular(constants.borderRadius(context)),
+              ),
+              child: Text(
+                message,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  height: 1.5,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+            ),
+
+            SizedBox(height: constants.spacingL),
+
+            // 확인 버튼
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isError
+                      ? theme.colorScheme.error
+                      : theme.colorScheme.primary,
+                  foregroundColor: isError
+                      ? theme.colorScheme.onError
+                      : theme.colorScheme.onPrimary,
+                  padding: EdgeInsets.symmetric(vertical: constants.spacingM),
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius.circular(constants.borderRadius(context)),
+                  ),
+                ),
+                child: const Text('확인'),
+              ),
+            ),
+          ],
         ),
       ),
     );

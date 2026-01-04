@@ -7,6 +7,7 @@ import '../../screen/about/About_Me_Page.dart';
 import '../../screen/projects/Projects_Page.dart';
 import '../../screen/contact/Contact_Page.dart';
 import '../../screen/contact/Contact_Admin_Page.dart';
+import 'package:web/web.dart' as web;
 
 class AppRoutes {
   // 라우트 이름 상수
@@ -27,24 +28,36 @@ class AppRoutes {
       ),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
+      middlewares: [
+        TitleMiddleware('최인호 포트폴리오'),
+      ]
     ),
     GetPage(
       name: aboutMe,
       page: () => const AboutMePage(),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
+      middlewares: [
+          TitleMiddleware('최인호 포트폴리오 - 소개')
+      ]
     ),
     GetPage(
       name: projects,
       page: () => const ProjectsPage(),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
+        middlewares: [
+          TitleMiddleware('최인호 포트폴리오 - 프로젝트')
+        ]
     ),
     GetPage(
       name: contact,
       page: () => const ContactPage(),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
+        middlewares: [
+          TitleMiddleware('최인호 포트폴리오 - 연락처')
+        ]
     ),
     // ⭐ Contact Admin 페이지
     GetPage(
@@ -53,7 +66,10 @@ class AppRoutes {
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 300),
       // 관리자 권한 체크 미들웨어
-      middlewares: [AdminMiddleware()],
+      middlewares: [
+        AdminMiddleware(),
+        TitleMiddleware('최인호 포트폴리오 - 관리자')
+      ],
     ),
   ];
 
@@ -134,5 +150,18 @@ class AdminMiddleware extends GetMiddleware {
   List<Bindings>? onBindingsStart(List<Bindings>? bindings) {
     debugPrint('🔗 [AdminMiddleware] Bindings 시작');
     return super.onBindingsStart(bindings);
+  }
+}
+
+//탭창 옆 타이틀 수정
+class TitleMiddleware extends GetMiddleware {
+  final String title;
+
+  TitleMiddleware(this.title);
+
+  @override
+  RouteSettings? redirect(String? route) {
+    web.document.title = title;
+    return null;
   }
 }
