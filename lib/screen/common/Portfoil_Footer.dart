@@ -3,6 +3,8 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../util/config/Font_Sizes.dart';
+
 class PortfolioFooter extends StatelessWidget {
   const PortfolioFooter({super.key});
 
@@ -115,6 +117,7 @@ class _SocialButtonState extends State<_SocialButton> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -160,6 +163,7 @@ class _SocialButtonState extends State<_SocialButton> {
                   color: _isHovered
                       ? theme.colorScheme.primary
                       : theme.colorScheme.onSurface,
+                  fontSize: fontSizes.bodyMedium(context)
                 ),
               ),
             ],
@@ -177,34 +181,39 @@ class _CopyrightText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return RichText(
         text: TextSpan(
           text: '${DateTime.now().year} ',
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            fontSize: fontSizes.bodySmall(context)
           ),
           children: [
               TextSpan(
               text: 'iconoding',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.primary,
+                fontSize: fontSizes.bodySmall(context)
               )),
             TextSpan(
                 text: ' Portfolio ',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  fontSize: fontSizes.bodySmall(context)
               )),
             TextSpan(
                 text: '/ Developed by ',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    fontSize: fontSizes.bodySmall(context)
                 )),
             TextSpan(
                 text: 'FLUTTER',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.primary,
+                    fontSize: fontSizes.bodySmall(context)
                 )),
           ]
         ),

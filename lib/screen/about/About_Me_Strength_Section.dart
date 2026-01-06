@@ -7,6 +7,8 @@ import 'package:portfolio/model/About_Me.dart';
 import 'package:portfolio/util/animation/Portfolio_Animation.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 
+import '../../util/config/Font_Sizes.dart';
+
 class AboutMeStrengthSection extends StatelessWidget {
   final AboutMe aboutMe;
 
@@ -59,6 +61,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Column(
       children: [
@@ -77,6 +80,7 @@ class _SectionTitle extends StatelessWidget {
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: theme.colorScheme.onSurface,
+                fontSize: fontSizes.headlineMedium(context)
               ),
             ),
           ],
@@ -87,6 +91,7 @@ class _SectionTitle extends StatelessWidget {
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            fontSize: fontSizes.bodyLarge(context)
           ),
         ),
       ],
@@ -267,6 +272,7 @@ class _StrengthCardState extends State<_StrengthCard>
     final icon = _icons[widget.index % _icons.length];
     final colors = _getColors(context);
     final color = colors[widget.index % colors.length];
+    final fontSizes = FontSizes.of(context);
 
     return MouseRegion(
       onEnter: (_) => _onHoverChanged(true),
@@ -332,11 +338,7 @@ class _StrengthCardState extends State<_StrengthCard>
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w600,
-                  fontSize: appController.responsive(
-                    mobile: 12.sp,  // 모바일: 작은 폰트
-                    tablet: 18.sp,
-                    web: 22.sp,
-                  ),
+                  fontSize: fontSizes.titleLarge(context),
                   color: theme.colorScheme.onSurface,
                 ),
               ),
@@ -358,11 +360,7 @@ class _StrengthCardState extends State<_StrengthCard>
                   ),
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    fontSize: appController.responsive(
-                      mobile: 10.sp,  // 모바일: 작은 폰트
-                      tablet: 14.sp,
-                      web: 14.sp,
-                    ),
+                    fontSize: fontSizes.bodyMedium(context),
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),

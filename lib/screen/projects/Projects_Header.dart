@@ -4,6 +4,8 @@ import 'package:portfolio/controller/App_Controller.dart';
 import 'package:portfolio/util/animation/Portfolio_Animation.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 
+import '../../util/config/Font_Sizes.dart';
+
 class ProjectsHeader extends StatelessWidget {
   const ProjectsHeader({super.key});
 
@@ -121,11 +123,12 @@ class _HeaderTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final fontSizes = FontSizes.of(context);
     return Text(
       'Projects',
       textAlign: TextAlign.center,
       style: theme.textTheme.displayMedium?.copyWith(
+        fontSize: fontSizes.displayMedium(context),
         fontWeight: FontWeight.w700,
         color: theme.colorScheme.tertiary,
       ),
@@ -140,12 +143,14 @@ class _HeaderSubtitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Text(
       '진행한 프로젝트들',
       textAlign: TextAlign.center,
       style: theme.textTheme.titleLarge?.copyWith(
         color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+        fontSize: fontSizes.titleLarge(context),
         fontWeight: FontWeight.w500,
       ),
     );
@@ -159,11 +164,12 @@ class _HeaderDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final fontSizes = FontSizes.of(context);
     return Text(
       '다양한 프로젝트 경험을 통해 실력을 쌓아왔습니다',
       textAlign: TextAlign.center,
       style: theme.textTheme.bodyLarge?.copyWith(
+        fontSize: fontSizes.bodyLarge(context),
         color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
         height: 1.5,
       ),

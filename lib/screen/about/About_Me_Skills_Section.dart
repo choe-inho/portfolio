@@ -7,6 +7,7 @@ import 'package:portfolio/model/Skill.dart';
 import 'package:portfolio/util/animation/Portfolio_Animation.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:portfolio/util/config/Skills_Config.dart';
+import '../../util/config/Font_Sizes.dart';
 
 class AboutMeSkillsSection extends StatelessWidget {
   const AboutMeSkillsSection({super.key});
@@ -50,6 +51,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Column(
       children: [
@@ -68,6 +70,7 @@ class _SectionTitle extends StatelessWidget {
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: theme.colorScheme.onSurface,
+                fontSize: fontSizes.headlineMedium(context)
               ),
             ),
           ],
@@ -78,6 +81,7 @@ class _SectionTitle extends StatelessWidget {
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            fontSize: fontSizes.bodyLarge(context)
           ),
         ),
       ],
@@ -170,6 +174,7 @@ class _SkillCategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Container(
       width: double.infinity,
@@ -198,8 +203,6 @@ class _SkillCategoryCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 40.r,
-                height: 40.r,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.secondaryContainer.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(
@@ -208,7 +211,7 @@ class _SkillCategoryCard extends StatelessWidget {
                 ),
                 child: Icon(
                   _getCategoryIcon(category),
-                  size: 20.r,
+                  size: constants.smallIconSize(context),
                   color: theme.colorScheme.secondary,
                 ),
               ),
@@ -218,6 +221,7 @@ class _SkillCategoryCard extends StatelessWidget {
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: theme.colorScheme.onSurface,
+                  fontSize: fontSizes.titleLarge(context)
                 ),
               ),
             ],
@@ -230,7 +234,7 @@ class _SkillCategoryCard extends StatelessWidget {
             spacing: constants.spacingM,
             runSpacing: constants.spacingM,
             children: skills.map((skill) {
-              return _SkillChip(skill: skill);
+              return IntrinsicHeight(child: _SkillChip(skill: skill));
             }).toList(),
           ),
         ],
@@ -291,6 +295,7 @@ class _SkillChipState extends State<_SkillChip>
     final constants = AppConstants.of(context);
     final appController = Get.find<AppController>();
     final skillColor = Color(widget.skill.color);
+    final fontSizes = FontSizes.of(context);
 
     return MouseRegion(
       onEnter: (_) => _onHoverChanged(true),
@@ -300,11 +305,7 @@ class _SkillChipState extends State<_SkillChip>
         scale: _scaleAnimation,
         child: AnimatedContainer(
           duration: constants.fastAnimation,
-          width: appController.responsive(
-            mobile: 100.w,  // 모바일: 작은 너비
-            tablet: 140.w,
-            web: 140.w,
-          ),
+          width: appController.isMobile ? 140.w : 120.w,
           padding: EdgeInsets.all(
             appController.responsive(
               mobile: constants.spacingS,
@@ -340,16 +341,8 @@ class _SkillChipState extends State<_SkillChip>
             children: [
               // 아이콘
               Container(
-                width: appController.responsive(
-                  mobile: 40.r,
-                  tablet: 48.r,
-                  web: 48.r,
-                ),
-                height: appController.responsive(
-                  mobile: 40.r,
-                  tablet: 48.r,
-                  web: 48.r,
-                ),
+                height: constants.iconSize(context),
+                width: constants.iconSize(context),
                 decoration: BoxDecoration(
                   color: _isHovered
                       ? skillColor.withValues(alpha: 0.15)
@@ -358,41 +351,31 @@ class _SkillChipState extends State<_SkillChip>
                     constants.smallBorderRadius(context),
                   ),
                 ),
-                child: Center(
-                  child: Image.asset(
-                    widget.skill.icon,
-                    width: appController.responsive(
-                      mobile: 28.r,
-                      tablet: 32.r,
-                      web: 32.r,
-                    ),
-                    height: appController.responsive(
-                      mobile: 28.r,
-                      tablet: 32.r,
-                      web: 32.r,
-                    ),
-                    fit: BoxFit.contain,
-                  ),
+                alignment: Alignment.center,
+                child: Image.asset(
+                  widget.skill.icon,
+                  width: constants.smallIconSize(context),
+                  height: constants.smallIconSize(context),
+                  fit: BoxFit.contain,
                 ),
               ),
 
               SizedBox(height: constants.spacingS),
 
               // 이름
-              Text(
-                widget.skill.name,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: appController.responsive(
-                    mobile: 12.sp,
-                    tablet: 14.sp,
-                    web: 14.sp,
+              FittedBox(
+                fit: BoxFit.fitHeight,
+                child: Text(
+                  widget.skill.name,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: fontSizes.bodyMedium(context),
+                    color: theme.colorScheme.onSurface,
+                    height: 1.2
                   ),
-                  color: theme.colorScheme.onSurface,
                 ),
               ),
-
               SizedBox(height: constants.spacingXS),
 
               // 숙련도 표시
@@ -420,6 +403,8 @@ class _ProficiencyIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final constants = AppConstants.of(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(3, (index) {
@@ -427,8 +412,8 @@ class _ProficiencyIndicator extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 2.w),
           child: Container(
-            width: 6.w,
-            height: 6.h,
+            width: constants.iconSize(context) * 0.15,
+            height: constants.iconSize(context) * 0.15,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isActive ? color : color.withValues(alpha: 0.2),

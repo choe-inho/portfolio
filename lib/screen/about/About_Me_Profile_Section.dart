@@ -9,6 +9,7 @@ import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../util/animation/Portfolio_Indicator.dart';
+import '../../util/config/Font_Sizes.dart';
 
 class AboutMeProfileSection extends StatelessWidget {
   final AboutMe aboutMe;
@@ -246,7 +247,8 @@ class _ProfileInfo extends StatelessWidget {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
     final age = _calculateAge(aboutMe.birthDay);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -258,6 +260,7 @@ class _ProfileInfo extends StatelessWidget {
             style: theme.textTheme.displaySmall?.copyWith(
               fontWeight: FontWeight.w700,
               color: theme.colorScheme.onSurface,
+              fontSize: fontSizes.displaySmall(context)
             ),
           ),
         ),
@@ -311,6 +314,7 @@ class _ProfileInfo extends StatelessWidget {
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: theme.colorScheme.onSurface,
+                  fontSize: fontSizes.titleLarge(context)
                 ),
               ),
             ],
@@ -339,6 +343,7 @@ class _ProfileInfo extends StatelessWidget {
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurface,
                 height: 1.7,
+                fontSize: fontSizes.bodyLarge(context)
               ),
             ),
           ),
@@ -364,7 +369,8 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Row(
       children: [
         // 아이콘
@@ -394,6 +400,7 @@ class _InfoRow extends StatelessWidget {
               label,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                fontSize: fontSizes.bodySmall(context)
               ),
             ),
             Text(
@@ -401,6 +408,7 @@ class _InfoRow extends StatelessWidget {
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: theme.colorScheme.onSurface,
+                fontSize: fontSizes.bodyLarge(context)
               ),
             ),
           ],

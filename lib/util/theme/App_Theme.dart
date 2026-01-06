@@ -1,9 +1,15 @@
 // lib/theme/app_theme.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:portfolio/controller/App_Controller.dart';
 import 'App_Colors.dart';
 
+// ============================================
+// AppTheme - 기본 Theme (변경 없음)
+// ============================================
 class AppTheme {
+  // 기본 Light Theme (웹 기준)
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
@@ -11,41 +17,28 @@ class AppTheme {
       fontFamily: 'Pretendard',
 
       colorScheme: const ColorScheme.light(
-        // Primary
         primary: AppColors.primaryLight,
         onPrimary: AppColors.onPrimaryLight,
         primaryContainer: AppColors.primaryContainerLight,
         onPrimaryContainer: AppColors.onPrimaryContainerLight,
-
-        // Secondary
         secondary: AppColors.secondaryLight,
         onSecondary: AppColors.onSecondaryLight,
         secondaryContainer: AppColors.secondaryContainerLight,
         onSecondaryContainer: AppColors.onSecondaryContainerLight,
-
-        // Tertiary
         tertiary: AppColors.tertiaryLight,
         onTertiary: AppColors.onTertiaryLight,
         tertiaryContainer: AppColors.tertiaryContainerLight,
         onTertiaryContainer: AppColors.onTertiaryContainerLight,
-
-        // Error
         error: AppColors.errorLight,
         onError: AppColors.onErrorLight,
         errorContainer: AppColors.errorContainerLight,
         onErrorContainer: AppColors.onErrorContainerLight,
-
-        // Surface
         surface: AppColors.surfaceLight,
         onSurface: AppColors.onSurfaceLight,
         surfaceVariant: AppColors.surfaceVariantLight,
         onSurfaceVariant: AppColors.onSurfaceVariantLight,
-
-        // Background
         background: AppColors.backgroundLight,
         onBackground: AppColors.onBackgroundLight,
-
-        // Others
         outline: AppColors.outlineLight,
         outlineVariant: AppColors.outlineVariantLight,
         shadow: AppColors.shadowLight,
@@ -54,12 +47,11 @@ class AppTheme {
         inversePrimary: AppColors.inversePrimaryLight,
       ),
 
-      // Text Theme
+      // Text Theme - 웹 기준 기본값
       textTheme: TextTheme(
-        // Display
         displayLarge: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 57.sp,
+          fontSize: 48.sp,
           fontWeight: FontWeight.w400,
           letterSpacing: -0.25,
           height: 1.12,
@@ -67,7 +59,7 @@ class AppTheme {
         ),
         displayMedium: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 45.sp,
+          fontSize: 36.sp,
           fontWeight: FontWeight.w400,
           letterSpacing: 0,
           height: 1.16,
@@ -75,17 +67,15 @@ class AppTheme {
         ),
         displaySmall: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 36.sp,
+          fontSize: 32.sp,
           fontWeight: FontWeight.w400,
           letterSpacing: 0,
           height: 1.22,
           color: AppColors.onBackgroundLight,
         ),
-
-        // Headline
         headlineLarge: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 32.sp,
+          fontSize: 28.sp,
           fontWeight: FontWeight.w400,
           letterSpacing: 0,
           height: 1.25,
@@ -93,7 +83,7 @@ class AppTheme {
         ),
         headlineMedium: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 28.sp,
+          fontSize: 24.sp,
           fontWeight: FontWeight.w400,
           letterSpacing: 0,
           height: 1.29,
@@ -101,17 +91,15 @@ class AppTheme {
         ),
         headlineSmall: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 24.sp,
+          fontSize: 22.sp,
           fontWeight: FontWeight.w400,
           letterSpacing: 0,
           height: 1.33,
           color: AppColors.onBackgroundLight,
         ),
-
-        // Title
         titleLarge: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 22.sp,
+          fontSize: 20.sp,
           fontWeight: FontWeight.w600,
           letterSpacing: 0,
           height: 1.27,
@@ -133,8 +121,6 @@ class AppTheme {
           height: 1.43,
           color: AppColors.onBackgroundLight,
         ),
-
-        // Label
         labelLarge: TextStyle(
           fontFamily: 'Pretendard',
           fontSize: 14.sp,
@@ -159,8 +145,6 @@ class AppTheme {
           height: 1.45,
           color: AppColors.onBackgroundLight,
         ),
-
-        // Body
         bodyLarge: TextStyle(
           fontFamily: 'Pretendard',
           fontSize: 16.sp,
@@ -187,7 +171,6 @@ class AppTheme {
         ),
       ),
 
-      // AppBar Theme
       appBarTheme: AppBarTheme(
         leadingWidth: 45.w,
         elevation: 0,
@@ -202,7 +185,6 @@ class AppTheme {
         toolbarHeight: 56.h,
       ),
 
-      // Card Theme
       cardTheme: CardThemeData(
         elevation: 2,
         shape: RoundedRectangleBorder(
@@ -212,7 +194,6 @@ class AppTheme {
         margin: EdgeInsets.all(8.w),
       ),
 
-      // Elevated Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 2,
@@ -232,7 +213,6 @@ class AppTheme {
         ),
       ),
 
-      // Text Button Theme
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           shape: RoundedRectangleBorder(
@@ -250,7 +230,6 @@ class AppTheme {
         ),
       ),
 
-      // Outlined Button Theme
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           shape: RoundedRectangleBorder(
@@ -269,7 +248,6 @@ class AppTheme {
         ),
       ),
 
-      // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
@@ -312,7 +290,6 @@ class AppTheme {
         ),
       ),
 
-      // Floating Action Button Theme
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: AppColors.primaryLight,
         foregroundColor: AppColors.onPrimaryLight,
@@ -322,7 +299,6 @@ class AppTheme {
         ),
       ),
 
-      // Bottom Navigation Bar Theme
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.surfaceLight,
         selectedItemColor: AppColors.primaryLight,
@@ -341,7 +317,6 @@ class AppTheme {
         ),
       ),
 
-      // Dialog Theme
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.surfaceLight,
         shape: RoundedRectangleBorder(
@@ -362,7 +337,6 @@ class AppTheme {
         ),
       ),
 
-      // Snack Bar Theme
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.inverseSurfaceLight,
         contentTextStyle: TextStyle(
@@ -379,6 +353,7 @@ class AppTheme {
     );
   }
 
+  // Dark Theme (Light와 동일한 구조)
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
@@ -386,41 +361,28 @@ class AppTheme {
       fontFamily: 'Pretendard',
 
       colorScheme: const ColorScheme.dark(
-        // Primary
         primary: AppColors.primaryDark,
         onPrimary: AppColors.onPrimaryDark,
         primaryContainer: AppColors.primaryContainerDark,
         onPrimaryContainer: AppColors.onPrimaryContainerDark,
-
-        // Secondary
         secondary: AppColors.secondaryDark,
         onSecondary: AppColors.onSecondaryDark,
         secondaryContainer: AppColors.secondaryContainerDark,
         onSecondaryContainer: AppColors.onSecondaryContainerDark,
-
-        // Tertiary
         tertiary: AppColors.tertiaryDark,
         onTertiary: AppColors.onTertiaryDark,
         tertiaryContainer: AppColors.tertiaryContainerDark,
         onTertiaryContainer: AppColors.onTertiaryContainerDark,
-
-        // Error
         error: AppColors.errorDark,
         onError: AppColors.onErrorDark,
         errorContainer: AppColors.errorContainerDark,
         onErrorContainer: AppColors.onErrorContainerDark,
-
-        // Surface
         surface: AppColors.surfaceDark,
         onSurface: AppColors.onSurfaceDark,
         surfaceVariant: AppColors.surfaceVariantDark,
         onSurfaceVariant: AppColors.onSurfaceVariantDark,
-
-        // Background
         background: AppColors.backgroundDark,
         onBackground: AppColors.onBackgroundDark,
-
-        // Others
         outline: AppColors.outlineDark,
         outlineVariant: AppColors.outlineVariantDark,
         shadow: AppColors.shadowDark,
@@ -429,12 +391,11 @@ class AppTheme {
         inversePrimary: AppColors.inversePrimaryDark,
       ),
 
-      // Text Theme
+      // Text Theme은 Light와 동일 (색상만 다름)
       textTheme: TextTheme(
-        // Display
         displayLarge: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 57.sp,
+          fontSize: 48.sp,
           fontWeight: FontWeight.w400,
           letterSpacing: -0.25,
           height: 1.12,
@@ -442,7 +403,7 @@ class AppTheme {
         ),
         displayMedium: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 45.sp,
+          fontSize: 36.sp,
           fontWeight: FontWeight.w400,
           letterSpacing: 0,
           height: 1.16,
@@ -450,17 +411,15 @@ class AppTheme {
         ),
         displaySmall: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 36.sp,
+          fontSize: 32.sp,
           fontWeight: FontWeight.w400,
           letterSpacing: 0,
           height: 1.22,
           color: AppColors.onBackgroundDark,
         ),
-
-        // Headline
         headlineLarge: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 32.sp,
+          fontSize: 28.sp,
           fontWeight: FontWeight.w400,
           letterSpacing: 0,
           height: 1.25,
@@ -468,7 +427,7 @@ class AppTheme {
         ),
         headlineMedium: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 28.sp,
+          fontSize: 24.sp,
           fontWeight: FontWeight.w400,
           letterSpacing: 0,
           height: 1.29,
@@ -476,17 +435,15 @@ class AppTheme {
         ),
         headlineSmall: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 24.sp,
+          fontSize: 22.sp,
           fontWeight: FontWeight.w400,
           letterSpacing: 0,
           height: 1.33,
           color: AppColors.onBackgroundDark,
         ),
-
-        // Title
         titleLarge: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 22.sp,
+          fontSize: 20.sp,
           fontWeight: FontWeight.w500,
           letterSpacing: 0,
           height: 1.27,
@@ -494,7 +451,7 @@ class AppTheme {
         ),
         titleMedium: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 16.sp,
+          fontSize: 18.sp,
           fontWeight: FontWeight.w500,
           letterSpacing: 0.15,
           height: 1.50,
@@ -502,14 +459,12 @@ class AppTheme {
         ),
         titleSmall: TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 14.sp,
+          fontSize: 16.sp,
           fontWeight: FontWeight.w500,
           letterSpacing: 0.1,
           height: 1.43,
           color: AppColors.onBackgroundDark,
         ),
-
-        // Label
         labelLarge: TextStyle(
           fontFamily: 'Pretendard',
           fontSize: 14.sp,
@@ -534,8 +489,6 @@ class AppTheme {
           height: 1.45,
           color: AppColors.onBackgroundDark,
         ),
-
-        // Body
         bodyLarge: TextStyle(
           fontFamily: 'Pretendard',
           fontSize: 16.sp,
@@ -562,7 +515,6 @@ class AppTheme {
         ),
       ),
 
-      // AppBar Theme
       appBarTheme: AppBarTheme(
         leadingWidth: 45.w,
         elevation: 0,
@@ -577,7 +529,6 @@ class AppTheme {
         toolbarHeight: 56.h,
       ),
 
-      // Card Theme
       cardTheme: CardThemeData(
         elevation: 4,
         shape: RoundedRectangleBorder(
@@ -587,7 +538,6 @@ class AppTheme {
         margin: EdgeInsets.all(8.w),
       ),
 
-      // Elevated Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 4,
@@ -607,7 +557,6 @@ class AppTheme {
         ),
       ),
 
-      // Text Button Theme
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           shape: RoundedRectangleBorder(
@@ -625,7 +574,6 @@ class AppTheme {
         ),
       ),
 
-      // Outlined Button Theme
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           shape: RoundedRectangleBorder(
@@ -644,7 +592,6 @@ class AppTheme {
         ),
       ),
 
-      // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.r),
@@ -687,7 +634,6 @@ class AppTheme {
         ),
       ),
 
-      // Floating Action Button Theme
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: AppColors.primaryDark,
         foregroundColor: AppColors.onPrimaryDark,
@@ -697,7 +643,6 @@ class AppTheme {
         ),
       ),
 
-      // Bottom Navigation Bar Theme
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.surfaceDark,
         selectedItemColor: AppColors.primaryDark,
@@ -716,7 +661,6 @@ class AppTheme {
         ),
       ),
 
-      // Dialog Theme
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.surfaceDark,
         shape: RoundedRectangleBorder(
@@ -737,7 +681,6 @@ class AppTheme {
         ),
       ),
 
-      // Snack Bar Theme
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.inverseSurfaceDark,
         contentTextStyle: TextStyle(
@@ -753,5 +696,4 @@ class AppTheme {
       ),
     );
   }
-
 }

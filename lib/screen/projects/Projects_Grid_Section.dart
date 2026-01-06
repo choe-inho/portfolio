@@ -7,6 +7,7 @@ import 'package:portfolio/util/animation/Portfolio_Animation.dart';
 import 'package:portfolio/util/animation/Portfolio_Indicator.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 
+import '../../util/config/Font_Sizes.dart';
 import '../common/Loading_State.dart';
 import 'Projects_Card.dart';
 
@@ -53,7 +54,8 @@ class _EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Center(
       child: Padding(
         padding: EdgeInsets.all(constants.largePadding(context) * 2),
@@ -70,6 +72,7 @@ class _EmptyState extends StatelessWidget {
               '프로젝트가 없습니다',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w600,
+                fontSize: fontSizes.titleLarge(context),
                 color: theme.colorScheme.onSurface,
               ),
             ),
@@ -78,6 +81,7 @@ class _EmptyState extends StatelessWidget {
               '곧 새로운 프로젝트가 추가될 예정입니다',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                fontSize: fontSizes.bodyMedium(context)
               ),
             ),
           ],
@@ -104,14 +108,14 @@ class _ProjectsGrid extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: appController.responsive(
-            mobile: 2,
+            mobile: 1,
             tablet: 2,
             web: 3,
           ),
           crossAxisSpacing: constants.spacingL,
           mainAxisSpacing: constants.spacingL,
           childAspectRatio: appController.responsive(
-            mobile: 0.72,
+            mobile: 1,
             tablet: 1.05,
             web: 0.9,
           ),

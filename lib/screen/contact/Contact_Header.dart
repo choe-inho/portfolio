@@ -8,6 +8,7 @@ import 'package:portfolio/util/route/App_Routes.dart';
 import 'package:portfolio/util/theme/App_Colors.dart';
 
 import '../../controller/Admin_Contoller.dart';
+import '../../util/config/Font_Sizes.dart';
 
 class ContactHeader extends StatelessWidget {
   const ContactHeader({super.key});
@@ -203,7 +204,8 @@ class _HeaderTitleState extends State<_HeaderTitle> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return GestureDetector(
       onTap: _handleTap,
       behavior: HitTestBehavior.opaque,
@@ -213,6 +215,7 @@ class _HeaderTitleState extends State<_HeaderTitle> {
         style: theme.textTheme.displayMedium?.copyWith(
           fontWeight: FontWeight.w700,
           color: theme.colorScheme.success,
+          fontSize: fontSizes.displayMedium(context)
         ),
       ),
     );
@@ -226,13 +229,15 @@ class _HeaderSubtitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Text(
       '연락하기',
       textAlign: TextAlign.center,
       style: theme.textTheme.titleLarge?.copyWith(
         color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
         fontWeight: FontWeight.w500,
+        fontSize: fontSizes.titleLarge(context)
       ),
     );
   }
@@ -245,13 +250,15 @@ class _HeaderDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Text(
       '언제든지 편하게 연락주세요!\n함께 멋진 프로젝트를 만들어가요',
       textAlign: TextAlign.center,
       style: theme.textTheme.bodyLarge?.copyWith(
         color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
         height: 1.5,
+        fontSize: fontSizes.bodyLarge(context)
       ),
     );
   }

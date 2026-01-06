@@ -5,6 +5,7 @@ import 'package:portfolio/controller/Projects_Controller.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:portfolio/util/route/App_Routes.dart';
 import '../../controller/Admin_Contoller.dart';
+import '../../util/config/Font_Sizes.dart';
 import '../admin/Admin_Login_Dialog.dart';
 import '../common/Portfoil_Footer.dart';
 import '../common/Portfolio_Navigation_Bar.dart' as nav;
@@ -144,7 +145,8 @@ class _AdminFAB extends StatelessWidget {
   Widget build(BuildContext context) {
     final adminController = Get.find<AdminController>();
     final theme = Theme.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    final constants = AppConstants.of(context);
     return Obx(() {
       final isAdmin = adminController.canUseAdminFeatures;
 
@@ -156,12 +158,14 @@ class _AdminFAB extends StatelessWidget {
         icon: Icon(
           isAdmin ? LucideIcons.plus : LucideIcons.shield,
           color: theme.colorScheme.onPrimary,
+          size: constants.smallIconSize(context),
         ),
         label: Text(
           isAdmin ? '프로젝트 추가' : '관리자 로그인',
           style: TextStyle(
             color: theme.colorScheme.onPrimary,
             fontWeight: FontWeight.w600,
+            fontSize: fontSizes.bodyMedium(context)
           ),
         ),
       );
@@ -178,7 +182,8 @@ class _AdminStatusBar extends StatelessWidget {
     final adminController = Get.find<AdminController>();
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -205,6 +210,7 @@ class _AdminStatusBar extends StatelessWidget {
           Text(
             '관리자 모드: ${adminController.currentUser?.email ?? "알 수 없음"}',
             style: theme.textTheme.bodySmall?.copyWith(
+              fontSize: fontSizes.bodySmall(context),
               color: theme.colorScheme.primary,
               fontWeight: FontWeight.w600,
             ),

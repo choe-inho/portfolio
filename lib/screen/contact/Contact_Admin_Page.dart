@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:portfolio/util/theme/App_Colors.dart';
 
 import '../../controller/Admin_Contoller.dart';
+import '../../util/config/Font_Sizes.dart';
 
 /// 관리자용 Contact 관리 페이지
 /// 문의 내역 확인, 상태 변경, 답변 처리
@@ -70,6 +71,8 @@ class _NoPermissionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fontSizes = FontSizes.of(context);
+    
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -82,7 +85,10 @@ class _NoPermissionView extends StatelessWidget {
           SizedBox(height: 16.h),
           Text(
             '관리자 권한이 필요합니다',
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontSize: fontSizes.headlineSmall(context)
+            ),
+            
           ),
         ],
       ),
@@ -98,6 +104,8 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fontSizes = FontSizes.of(context);
+    
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -110,12 +118,16 @@ class _ErrorView extends StatelessWidget {
           SizedBox(height: 16.h),
           Text(
             '오류가 발생했습니다',
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontSize: fontSizes.headlineSmall(context)
+            ),
           ),
           SizedBox(height: 8.h),
           Text(
             error,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontSize: fontSizes.bodyMedium(context)
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -130,6 +142,8 @@ class _EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fontSizes = FontSizes.of(context);
+    
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -142,7 +156,9 @@ class _EmptyView extends StatelessWidget {
           SizedBox(height: 16.h),
           Text(
             '문의 내역이 없습니다',
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontSize: fontSizes.headlineSmall(context)
+            ),
           ),
         ],
       ),
@@ -186,7 +202,8 @@ class _MessageCard extends StatelessWidget {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
     final dateFormat = DateFormat('yyyy.MM.dd HH:mm');
-
+    final fontSizes = FontSizes.of(context);
+    
     return Card(
       margin: EdgeInsets.only(bottom: constants.spacingM),
       child: InkWell(
@@ -221,6 +238,7 @@ class _MessageCard extends StatelessWidget {
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight:
                         message.isRead ? FontWeight.w500 : FontWeight.w700,
+                        fontSize: fontSizes.titleMedium(context)
                       ),
                     ),
                   ),
@@ -229,6 +247,7 @@ class _MessageCard extends StatelessWidget {
                     dateFormat.format(message.timestamp),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      fontSize: fontSizes.bodySmall(context)
                     ),
                   ),
                 ],
@@ -249,6 +268,7 @@ class _MessageCard extends StatelessWidget {
                     message.email,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      fontSize: fontSizes.bodySmall(context)
                     ),
                   ),
                 ],
@@ -261,6 +281,7 @@ class _MessageCard extends StatelessWidget {
                 message.subject,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
+                  fontSize: fontSizes.bodyMedium(context)
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -271,7 +292,9 @@ class _MessageCard extends StatelessWidget {
               // 메시지 미리보기
               Text(
                 message.message,
-                style: theme.textTheme.bodySmall,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontSize: fontSizes.bodySmall(context)
+                ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -353,7 +376,8 @@ class _MessageDetailDialog extends StatelessWidget {
     final constants = AppConstants.of(context);
     final contactController = Get.find<ContactController>();
     final dateFormat = DateFormat('yyyy년 MM월 dd일 HH:mm');
-
+    final fontSizes = FontSizes.of(context);
+    
     return Dialog(
       child: Container(
         constraints: BoxConstraints(maxWidth: 600.w),
@@ -368,7 +392,9 @@ class _MessageDetailDialog extends StatelessWidget {
                 Expanded(
                   child: Text(
                     '문의 상세',
-                    style: theme.textTheme.headlineSmall,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontSize: fontSizes.headlineSmall(context)
+                    ),
                   ),
                 ),
                 IconButton(
@@ -406,12 +432,15 @@ class _MessageDetailDialog extends StatelessWidget {
               '제목',
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w700,
+                fontSize: fontSizes.titleSmall(context)
               ),
             ),
             SizedBox(height: constants.spacingS),
             Text(
               message.subject,
-              style: theme.textTheme.bodyMedium,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontSize: fontSizes.bodyMedium(context)
+              ),
             ),
 
             SizedBox(height: constants.spacingL),
@@ -421,6 +450,7 @@ class _MessageDetailDialog extends StatelessWidget {
               '메시지',
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w700,
+                fontSize: fontSizes.titleSmall(context)
               ),
             ),
             SizedBox(height: constants.spacingS),
@@ -434,7 +464,9 @@ class _MessageDetailDialog extends StatelessWidget {
               ),
               child: Text(
                 message.message,
-                style: theme.textTheme.bodyMedium,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontSize: fontSizes.bodyMedium(context)
+                ),
               ),
             ),
 
@@ -501,7 +533,8 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Row(
       children: [
         Icon(
@@ -514,12 +547,15 @@ class _InfoRow extends StatelessWidget {
           '$label: ',
           style: theme.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.w600,
+            fontSize: fontSizes.bodyMedium(context)
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: theme.textTheme.bodyMedium,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: fontSizes.bodyMedium(context)
+            ),
           ),
         ),
       ],

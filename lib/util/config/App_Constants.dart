@@ -115,7 +115,137 @@ class AppConstants {
   }
 
   // ============================================
-  // 아이콘 크기
+  // 폰트 크기 (모바일 웹 최적화) ✨ NEW
+  // ============================================
+
+  /// 헤더 특대 폰트 크기 (Display Large)
+  double displayLargeFontSize(BuildContext context) {
+    try {
+      final controller = Get.find<AppController>();
+      return controller.responsive(
+        mobile: 28.0,    // 모바일: 28px (고정값)
+        tablet: 40.sp,
+        web: 48.sp,
+      );
+    } catch (e) {
+      return isTablet(context) ? 40.sp : 28.0;
+    }
+  }
+
+  /// 헤더 큰 폰트 크기 (Display Medium)
+  double displayMediumFontSize(BuildContext context) {
+    try {
+      final controller = Get.find<AppController>();
+      return controller.responsive(
+        mobile: 24.0,    // 모바일: 24px (고정값)
+        tablet: 32.sp,
+        web: 36.sp,
+      );
+    } catch (e) {
+      return isTablet(context) ? 32.sp : 24.0;
+    }
+  }
+
+  /// 제목 큰 폰트 크기 (Headline Large)
+  double headlineLargeFontSize(BuildContext context) {
+    try {
+      final controller = Get.find<AppController>();
+      return controller.responsive(
+        mobile: 20.0,    // 모바일: 20px (고정값)
+        tablet: 24.sp,
+        web: 28.sp,
+      );
+    } catch (e) {
+      return isTablet(context) ? 24.sp : 20.0;
+    }
+  }
+
+  /// 제목 중간 폰트 크기 (Headline Medium)
+  double headlineMediumFontSize(BuildContext context) {
+    try {
+      final controller = Get.find<AppController>();
+      return controller.responsive(
+        mobile: 18.0,    // 모바일: 18px (고정값)
+        tablet: 20.sp,
+        web: 24.sp,
+      );
+    } catch (e) {
+      return isTablet(context) ? 20.sp : 18.0;
+    }
+  }
+
+  /// 타이틀 큰 폰트 크기 (Title Large - 카드 타이틀용)
+  double titleLargeFontSize(BuildContext context) {
+    try {
+      final controller = Get.find<AppController>();
+      return controller.responsive(
+        mobile: 16.0,    // 모바일: 16px (고정값)
+        tablet: 18.sp,
+        web: 22.sp,
+      );
+    } catch (e) {
+      return isTablet(context) ? 18.sp : 16.0;
+    }
+  }
+
+  /// 타이틀 중간 폰트 크기 (Title Medium)
+  double titleMediumFontSize(BuildContext context) {
+    try {
+      final controller = Get.find<AppController>();
+      return controller.responsive(
+        mobile: 15.0,    // 모바일: 15px (고정값)
+        tablet: 16.sp,
+        web: 18.sp,
+      );
+    } catch (e) {
+      return isTablet(context) ? 16.sp : 15.0;
+    }
+  }
+
+  /// 본문 큰 폰트 크기 (Body Large)
+  double bodyLargeFontSize(BuildContext context) {
+    try {
+      final controller = Get.find<AppController>();
+      return controller.responsive(
+        mobile: 15.0,    // 모바일: 15px (고정값)
+        tablet: 16.sp,
+        web: 16.sp,
+      );
+    } catch (e) {
+      return isTablet(context) ? 16.sp : 15.0;
+    }
+  }
+
+  /// 본문 중간 폰트 크기 (Body Medium - 카드 설명용)
+  double bodyMediumFontSize(BuildContext context) {
+    try {
+      final controller = Get.find<AppController>();
+      return controller.responsive(
+        mobile: 13.0,    // 모바일: 13px (고정값)
+        tablet: 14.sp,
+        web: 14.sp,
+      );
+    } catch (e) {
+      return isTablet(context) ? 14.sp : 13.0;
+    }
+  }
+
+  /// 본문 작은 폰트 크기 (Body Small)
+  double bodySmallFontSize(BuildContext context) {
+    try {
+      final controller = Get.find<AppController>();
+      return controller.responsive(
+        mobile: 12.0,    // 모바일: 12px (고정값)
+        tablet: 13.sp,
+        web: 13.sp,
+      );
+    } catch (e) {
+      return isTablet(context) ? 13.sp : 12.0;
+    }
+  }
+
+  // ============================================
+  // 아이콘 크기 (모바일 고정값으로 개선) ✨ UPDATED
   // ============================================
 
   /// 다이얼로그 아이콘 크기
@@ -123,12 +253,12 @@ class AppConstants {
     try {
       final controller = Get.find<AppController>();
       return controller.responsive(
-        mobile: 24.r,
+        mobile: 28.0,    // 모바일: 28px (고정값)
         tablet: 32.r,
         web: 36.r,
       );
     } catch (e) {
-      return isTablet(context) ? 32.r : 24.r;
+      return isTablet(context) ? 32.r : 28.0;
     }
   }
 
@@ -137,12 +267,12 @@ class AppConstants {
     try {
       final controller = Get.find<AppController>();
       return controller.responsive(
-        mobile: 24.r,
+        mobile: 28.0,    // 모바일: 28px (고정값)
         tablet: 28.r,
         web: 32.r,
       );
     } catch (e) {
-      return isTablet(context) ? 28.r : 24.r;
+      return isTablet(context) ? 28.r : 28.0;
     }
   }
 
@@ -151,12 +281,12 @@ class AppConstants {
     try {
       final controller = Get.find<AppController>();
       return controller.responsive(
-        mobile: 16.r,
+        mobile: 20.0,    // 모바일: 20px (고정값)
         tablet: 20.r,
         web: 22.r,
       );
     } catch (e) {
-      return isTablet(context) ? 20.r : 16.r;
+      return isTablet(context) ? 20.r : 20.0;
     }
   }
 
@@ -165,12 +295,40 @@ class AppConstants {
     try {
       final controller = Get.find<AppController>();
       return controller.responsive(
-        mobile: 32.r,
+        mobile: 40.0,    // 모바일: 40px (고정값)
         tablet: 40.r,
         web: 48.r,
       );
     } catch (e) {
-      return isTablet(context) ? 40.r : 32.r;
+      return isTablet(context) ? 40.r : 40.0;
+    }
+  }
+
+  /// 카드용 아이콘 크기 (강점 섹션 등) ✨ NEW
+  double cardIconSize(BuildContext context) {
+    try {
+      final controller = Get.find<AppController>();
+      return controller.responsive(
+        mobile: 32.0,    // 모바일: 32px (고정값)
+        tablet: 32.r,
+        web: 32.r,
+      );
+    } catch (e) {
+      return isTablet(context) ? 32.r : 32.0;
+    }
+  }
+
+  /// 카드용 아이콘 컨테이너 크기 ✨ NEW
+  double cardIconContainerSize(BuildContext context) {
+    try {
+      final controller = Get.find<AppController>();
+      return controller.responsive(
+        mobile: 56.0,    // 모바일: 56px (고정값)
+        tablet: 64.r,
+        web: 64.r,
+      );
+    } catch (e) {
+      return isTablet(context) ? 64.r : 56.0;
     }
   }
 
@@ -405,22 +563,22 @@ class AppConstants {
   // ============================================
 
   /// 아주 작은 간격
-  double get spacingXS => 4.w;
+  double get spacingXS => 4;
 
   /// 작은 간격
-  double get spacingS => 8.w;
+  double get spacingS => 8;
 
   /// 보통 간격
-  double get spacingM => 16.w;
+  double get spacingM => 16;
 
   /// 큰 간격
-  double get spacingL => 24.w;
+  double get spacingL => 24;
 
   /// 아주 큰 간격
-  double get spacingXL => 32.w;
+  double get spacingXL => 32;
 
   /// 특대 간격
-  double get spacingXXL => 48.w;
+  double get spacingXXL => 48;
 
   // ============================================
   // 화면 크기 정보

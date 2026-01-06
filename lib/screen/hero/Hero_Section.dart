@@ -7,6 +7,8 @@ import 'package:portfolio/screen/common/Hero_Image.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:portfolio/util/config/Skills_Config.dart';
 
+import '../../util/config/Font_Sizes.dart';
+
 class HeroSection extends StatelessWidget {
   final VoidCallback? onViewProjects;
   final VoidCallback? onContact;
@@ -187,6 +189,7 @@ class _GreetingText extends StatelessWidget {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
     final appController = Get.find<AppController>();
+    final fontSizes = FontSizes.of(context);
 
     return Row(
       mainAxisSize: appController.isMobile ? MainAxisSize.min : MainAxisSize.min,
@@ -202,6 +205,7 @@ class _GreetingText extends StatelessWidget {
           style: theme.textTheme.titleLarge?.copyWith(
             color: theme.colorScheme.primary,
             fontWeight: FontWeight.w600,
+            fontSize: fontSizes.titleLarge(context)
           ),
         ),
       ],
@@ -217,18 +221,13 @@ class _MainTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final appController = Get.find<AppController>();
-
-    final fontSize = appController.responsive(
-      mobile: 32.sp,
-      tablet: 40.sp,
-      web: 48.sp,
-    );
+    final fontSizes = FontSizes.of(context);
 
     return Text(
       '사용자의 니즈를 생각하는\n개발자 최인호 입니다',
       textAlign: appController.isMobile ? TextAlign.center : TextAlign.start,
       style: theme.textTheme.displayLarge?.copyWith(
-        fontSize: fontSize,
+        fontSize: fontSizes.displayLarge(context),
         fontWeight: FontWeight.w700,
         height: 1.2,
         color: theme.colorScheme.onSurface,
@@ -245,6 +244,7 @@ class _SubTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final appController = Get.find<AppController>();
+    final fontSizes = FontSizes.of(context);
 
     return Text(
       '사용자 경험을 최우선으로 생각하며, 깔끔하고 효율적인 앱을 만듭니다.\n'
@@ -252,6 +252,7 @@ class _SubTitle extends StatelessWidget {
       textAlign: appController.isMobile ? TextAlign.center : TextAlign.start,
       style: theme.textTheme.bodyLarge?.copyWith(
         color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+        fontSize: fontSizes.bodyLarge(context),
         height: 1.6,
       ),
     );
@@ -317,7 +318,8 @@ class _PrimaryButtonState extends State<_PrimaryButton> {
   @override
   Widget build(BuildContext context) {
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    final theme = Theme.of(context);
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -329,7 +331,10 @@ class _PrimaryButtonState extends State<_PrimaryButton> {
         child: ElevatedButton.icon(
           onPressed: widget.onPressed,
           icon: Icon(widget.icon, size: constants.iconSize(context)),
-          label: Text(widget.label),
+          label: Text(widget.label, style: theme.textTheme.labelMedium?.copyWith(
+            fontSize: fontSizes.labelMedium(context),
+            color: theme.colorScheme.onPrimary
+          ),),
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.symmetric(
               horizontal: constants.spacingL,
@@ -365,7 +370,9 @@ class _SecondaryButtonState extends State<_SecondaryButton> {
   @override
   Widget build(BuildContext context) {
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    final theme = Theme.of(context);
+    
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -377,7 +384,10 @@ class _SecondaryButtonState extends State<_SecondaryButton> {
         child: OutlinedButton.icon(
           onPressed: widget.onPressed,
           icon: Icon(widget.icon, size: constants.iconSize(context)),
-          label: Text(widget.label),
+          label: Text(widget.label, style: theme.textTheme.labelMedium?.copyWith(
+            fontSize: fontSizes.labelMedium(context),
+            color: theme.colorScheme.primary
+          ),),
           style: OutlinedButton.styleFrom(
             padding: EdgeInsets.symmetric(
               horizontal: constants.spacingL,
@@ -398,6 +408,7 @@ class _SkillsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Column(
       children: [
@@ -407,6 +418,7 @@ class _SkillsSection extends StatelessWidget {
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w700,
             color: theme.colorScheme.onSurface,
+            fontSize: fontSizes.headlineSmall(context)
           ),
         ),
 
@@ -434,11 +446,13 @@ class _SkillsHorizontalList extends StatelessWidget {
         runSpacing: constants.spacingM,
         alignment: WrapAlignment.center,
         children: skills.map((skill) {
-          return _SkillCard(
-            name: skill.name,
-            icon: skill.icon,
-            color: Color(skill.color),
-            proficiency: skill.proficiency,
+          return IntrinsicHeight(
+            child: _SkillCard(
+              name: skill.name,
+              icon: skill.icon,
+              color: Color(skill.color),
+              proficiency: skill.proficiency,
+            ),
           );
         }).toList(),
       ),
@@ -504,6 +518,8 @@ class _SkillCardState extends State<_SkillCard>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
+    final appController = Get.find<AppController>();
 
     return MouseRegion(
       onEnter: (_) => _onHoverChanged(true),
@@ -513,8 +529,8 @@ class _SkillCardState extends State<_SkillCard>
         scale: _scaleAnimation,
         child: AnimatedContainer(
           duration: constants.fastAnimation,
-          width: 120.w,
-          padding: EdgeInsets.all(constants.spacingM),
+          width: appController.isMobile ? 150.w : 120.w,
+          padding: EdgeInsets.all(constants.spacingS),
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(
@@ -541,8 +557,8 @@ class _SkillCardState extends State<_SkillCard>
             children: [
               // 아이콘
               Container(
-                width: 48.r,
-                height: 48.r,
+                height: constants.largeIconSize(context),
+                width: constants.largeIconSize(context),
                 decoration: BoxDecoration(
                   color: _isHovered
                       ? widget.color.withValues(alpha: 0.15)
@@ -551,25 +567,28 @@ class _SkillCardState extends State<_SkillCard>
                     constants.smallBorderRadius(context),
                   ),
                 ),
-                child: Center(
-                  child: Image.asset(
-                    widget.icon,
-                    width: 32.r,
-                    height: 32.r,
-                    fit: BoxFit.contain,
-                  ),
+                alignment: Alignment.center,
+                child: Image.asset(
+                  widget.icon,
+                  width: constants.iconSize(context),
+                  height: constants.iconSize(context),
+                  fit: BoxFit.contain,
                 ),
               ),
 
               SizedBox(height: constants.spacingS),
 
               // 이름
-              Text(
-                widget.name,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: theme.colorScheme.onSurface,
+              FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  widget.name,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.onSurface,
+                    fontSize: fontSizes.bodySmall(context)
+                  ),
                 ),
               ),
 
@@ -609,8 +628,8 @@ class _ProficiencyIndicator extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 2.w),
           child: Container(
-            width: 6.w,
-            height: 6.h,
+            width: constants.iconSize(context) * 0.15,
+            height: constants.iconSize(context) * 0.15,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isActive

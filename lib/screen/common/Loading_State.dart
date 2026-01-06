@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../util/animation/Portfolio_Indicator.dart';
 import '../../util/config/App_Constants.dart';
+import '../../util/config/Font_Sizes.dart';
 
 /// 로딩 상태
 class LoadingState extends StatelessWidget {
@@ -13,7 +14,8 @@ class LoadingState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Center(
       child: Padding(
         padding: EdgeInsets.all(constants.largePadding(context) * 2),
@@ -29,6 +31,7 @@ class LoadingState extends StatelessWidget {
               loading,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                fontSize: fontSizes.bodyLarge(context)
               ),
             ),
           ],

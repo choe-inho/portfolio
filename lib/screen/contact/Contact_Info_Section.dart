@@ -11,6 +11,8 @@ import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:portfolio/util/theme/App_Colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../util/config/Font_Sizes.dart';
+
 class ContactInfoSection extends StatelessWidget {
   const ContactInfoSection({super.key});
 
@@ -192,6 +194,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Column(
       children: [
@@ -210,6 +213,7 @@ class _SectionTitle extends StatelessWidget {
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: theme.colorScheme.onSurface,
+                fontSize: fontSizes.headlineMedium(context)
               ),
             ),
           ],
@@ -220,6 +224,7 @@ class _SectionTitle extends StatelessWidget {
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            fontSize: fontSizes.bodyLarge(context)
           ),
         ),
       ],
@@ -235,6 +240,7 @@ class _ErrorView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Center(
       child: Padding(
@@ -252,6 +258,7 @@ class _ErrorView extends StatelessWidget {
               '연락처 정보를 불러올 수 없습니다',
               style: theme.textTheme.titleLarge?.copyWith(
                 color: theme.colorScheme.error,
+                fontSize: fontSizes.titleLarge(context)
               ),
             ),
             SizedBox(height: constants.spacingS),
@@ -259,6 +266,7 @@ class _ErrorView extends StatelessWidget {
               '잠시 후 다시 시도해주세요',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                fontSize: fontSizes.bodyMedium(context)
               ),
             ),
           ],
@@ -358,6 +366,7 @@ class _ContactCardState extends State<_ContactCard>
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
     final cardColor = widget.color(context);
+    final fontSizes = FontSizes.of(context);
 
     return MouseRegion(
       onEnter: (_) => _onHoverChanged(true),
@@ -410,6 +419,7 @@ class _ContactCardState extends State<_ContactCard>
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: theme.colorScheme.onSurface,
+                    fontSize: fontSizes.titleLarge(context)
                   ),
                 ),
 
@@ -428,6 +438,7 @@ class _ContactCardState extends State<_ContactCard>
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: cardColor,
                           fontWeight: FontWeight.w600,
+                          fontSize: fontSizes.bodyMedium(context)
                         ),
                       ),
                     ),
@@ -453,6 +464,7 @@ class _ContactCardState extends State<_ContactCard>
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    fontSize: fontSizes.bodySmall(context)
                   ),
                 ),
 

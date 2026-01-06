@@ -8,6 +8,8 @@ import 'package:portfolio/util/animation/Portfolio_Animation.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:portfolio/util/theme/App_Colors.dart';
 
+import '../../util/config/Font_Sizes.dart';
+
 class ContactFormSection extends StatelessWidget {
   const ContactFormSection({super.key});
 
@@ -54,6 +56,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Column(
       children: [
@@ -72,6 +75,7 @@ class _SectionTitle extends StatelessWidget {
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: theme.colorScheme.onSurface,
+                fontSize: fontSizes.headlineMedium(context)
               ),
             ),
           ],
@@ -82,6 +86,7 @@ class _SectionTitle extends StatelessWidget {
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            fontSize: fontSizes.bodyLarge(context)
           ),
         ),
       ],
@@ -97,7 +102,7 @@ class _FormContainer extends StatelessWidget {
 
   Future<void> _handleSubmit(BuildContext context) async {
     final success = await controller.submitMessage();
-
+    
     if (!context.mounted) return;
 
     if (success) {
@@ -112,7 +117,7 @@ class _FormContainer extends StatelessWidget {
                 size: 20.r,
               ),
               SizedBox(width: 8.w),
-              const Expanded(
+              Expanded(
                 child: Text(
                   '메시지가 성공적으로 전송되었습니다!\n빠른 시일 내에 답변드리겠습니다.',
                 ),
@@ -272,14 +277,26 @@ class _NameField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final fontSizes = FontSizes.of(context);
+    final constants = AppConstants.of(context);
 
     return TextFormField(
+      style: theme.textTheme.bodyMedium?.copyWith(
+        fontSize: fontSizes.bodyMedium(context)
+      ),
       controller: controller,
       enabled: enabled,
       decoration: InputDecoration(
+        labelStyle: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: fontSizes.bodyMedium(context)
+        ),
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: fontSizes.bodyMedium(context)
+        ),
         labelText: '이름 *',
         hintText: '홍길동',
         prefixIcon: Icon(
+          size: constants.smallIconSize(context),
           LucideIcons.user,
           color: enabled ? null : theme.colorScheme.onSurface.withValues(alpha: 0.38),
         ),
@@ -312,12 +329,23 @@ class _EmailField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    final constants = AppConstants.of(context);
+    
     return TextFormField(
+      style: theme.textTheme.bodyMedium?.copyWith(
+          fontSize: fontSizes.bodyMedium(context)
+      ),
       controller: controller,
       enabled: enabled,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
+        labelStyle: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: fontSizes.bodyMedium(context)
+        ),
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: fontSizes.bodyMedium(context)
+        ),
         labelText: '이메일 *',
         hintText: 'example@email.com',
         prefixIcon: Icon(
@@ -355,11 +383,22 @@ class _SubjectField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    final constants = AppConstants.of(context);
+    
     return TextFormField(
+      style: theme.textTheme.bodyMedium?.copyWith(
+          fontSize: fontSizes.bodyMedium(context)
+      ),
       controller: controller,
       enabled: enabled,
       decoration: InputDecoration(
+        labelStyle: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: fontSizes.bodyMedium(context)
+        ),
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: fontSizes.bodyMedium(context)
+        ),
         labelText: '제목 *',
         hintText: '문의 제목을 입력하세요',
         prefixIcon: Icon(
@@ -395,13 +434,24 @@ class _MessageField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    final constants = AppConstants.of(context);
+    
     return TextFormField(
+      style: theme.textTheme.bodyMedium?.copyWith(
+          fontSize: fontSizes.bodyMedium(context)
+      ),
       controller: controller,
       enabled: enabled,
       maxLines: 8,
       maxLength: 1000,
       decoration: InputDecoration(
+        labelStyle: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: fontSizes.bodyMedium(context)
+        ),
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: fontSizes.bodyMedium(context)
+        ),
         labelText: '메시지 *',
         hintText: '문의 내용을 자세히 작성해주세요',
         prefixIcon: Padding(
@@ -415,6 +465,9 @@ class _MessageField extends StatelessWidget {
         fillColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.5),
         alignLabelWithHint: true,
         helperText: '최소 10자 이상 입력해주세요',
+        helperStyle: theme.textTheme.labelMedium?.copyWith(
+            fontSize: fontSizes.labelMedium(context)
+        ),
       ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
@@ -450,7 +503,8 @@ class _SubmitButtonState extends State<_SubmitButton> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -471,8 +525,8 @@ class _SubmitButtonState extends State<_SubmitButton> {
           ),
           icon: widget.isLoading
               ? SizedBox(
-            width: 20.r,
-            height: 20.r,
+            width: constants.smallIconSize(context),
+            height: constants.smallIconSize(context),
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(
@@ -486,9 +540,9 @@ class _SubmitButtonState extends State<_SubmitButton> {
           ),
           label: Text(
             widget.isLoading ? '전송 중...' : '메시지 전송',
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w600,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontSize: fontSizes.titleMedium(context),
+              color: theme.colorScheme.onPrimary
             ),
           ),
         ),

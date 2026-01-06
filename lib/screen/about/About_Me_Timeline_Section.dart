@@ -10,6 +10,7 @@ import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:portfolio/util/helper/DateTime_Utils.dart';
 
 import '../../util/animation/Portfolio_Indicator.dart';
+import '../../util/config/Font_Sizes.dart';
 
 class AboutMeTimelineSection extends StatelessWidget {
   const AboutMeTimelineSection({super.key});
@@ -64,6 +65,7 @@ class _LoadingState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Center(
       child: Column(
@@ -78,6 +80,7 @@ class _LoadingState extends StatelessWidget {
             '경력 & 학력 정보를 불러오는 중...',
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              fontSize: fontSizes.bodyMedium(context)
             ),
           ),
         ],
@@ -94,6 +97,7 @@ class _EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Center(
       child: Padding(
@@ -111,6 +115,7 @@ class _EmptyState extends StatelessWidget {
               '등록된 경력 & 학력 정보가 없습니다',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                fontSize: fontSizes.bodyMedium(context)
               ),
             ),
           ],
@@ -128,6 +133,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Column(
       children: [
@@ -146,6 +152,7 @@ class _SectionTitle extends StatelessWidget {
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: theme.colorScheme.onSurface,
+                fontSize: fontSizes.headlineMedium(context)
               ),
             ),
           ],
@@ -156,6 +163,7 @@ class _SectionTitle extends StatelessWidget {
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            fontSize: fontSizes.bodyLarge(context)
           ),
         ),
       ],
@@ -296,6 +304,7 @@ class _TimelineItemState extends State<_TimelineItem> {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
     final appController = Get.find<AppController>();
+    final fontSizes = FontSizes.of(context);
 
     // 타입에 따른 색상
     final color = widget.timeline.type == TimeLineType.education
@@ -408,6 +417,7 @@ class _TimelineItemState extends State<_TimelineItem> {
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: color,
                               fontWeight: FontWeight.w600,
+                              fontSize: fontSizes.bodySmall(context)
                             ),
                           ),
                         ),
@@ -440,6 +450,7 @@ class _TimelineItemState extends State<_TimelineItem> {
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: theme.colorScheme.onSurfaceVariant,
                                   fontWeight: FontWeight.w500,
+                                  fontSize: fontSizes.bodySmall(context)
                                 ),
                               ),
                             ],
@@ -456,6 +467,7 @@ class _TimelineItemState extends State<_TimelineItem> {
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w700,
                         color: theme.colorScheme.onSurface,
+                        fontSize: fontSizes.titleLarge(context)
                       ),
                     ),
 
@@ -467,6 +479,7 @@ class _TimelineItemState extends State<_TimelineItem> {
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w500,
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                        fontSize: fontSizes.bodyLarge(context)
                       ),
                     ),
 
@@ -478,6 +491,7 @@ class _TimelineItemState extends State<_TimelineItem> {
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         height: 1.6,
+                        fontSize: fontSizes.bodyMedium(context)
                       ),
                     ),
                   ],

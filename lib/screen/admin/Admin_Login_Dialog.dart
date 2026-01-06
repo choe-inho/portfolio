@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 
 import '../../controller/Admin_Contoller.dart';
+import '../../util/config/Font_Sizes.dart';
 
 class AdminLoginDialog extends StatefulWidget {
   const AdminLoginDialog({super.key});
@@ -78,7 +79,8 @@ class _AdminLoginDialogState extends State<AdminLoginDialog> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Dialog(
       child: Container(
         width: 400.w,
@@ -103,6 +105,7 @@ class _AdminLoginDialogState extends State<AdminLoginDialog> {
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: theme.colorScheme.primary,
+                      fontSize: fontSizes.headlineSmall(context)
                     ),
                   ),
                 ],
@@ -221,6 +224,7 @@ class _AdminLoginDialogState extends State<AdminLoginDialog> {
                         '관리자 권한이 필요합니다',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.error,
+                          fontSize: fontSizes.bodySmall(context)
                         ),
                       ),
                     ),

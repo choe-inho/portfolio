@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:portfolio/controller/App_Controller.dart';
 import 'package:portfolio/util/animation/Portfolio_Animation.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
+import 'package:portfolio/util/config/Font_Sizes.dart';
 
 class AboutMeHeader extends StatelessWidget {
   const AboutMeHeader({super.key});
@@ -109,6 +110,7 @@ class _HeaderTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Text(
       'About Me',
@@ -116,6 +118,7 @@ class _HeaderTitle extends StatelessWidget {
       style: theme.textTheme.displayMedium?.copyWith(
         fontWeight: FontWeight.w700,
         color: theme.colorScheme.primary,
+        fontSize: fontSizes.displayMedium(context)
       ),
     );
   }
@@ -128,6 +131,7 @@ class _HeaderSubtitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Text(
       '저에 대해 소개합니다',
@@ -135,6 +139,7 @@ class _HeaderSubtitle extends StatelessWidget {
       style: theme.textTheme.titleLarge?.copyWith(
         color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
         fontWeight: FontWeight.w500,
+        fontSize: fontSizes.titleLarge(context)
       ),
     );
   }

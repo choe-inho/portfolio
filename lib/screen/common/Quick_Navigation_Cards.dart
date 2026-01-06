@@ -6,6 +6,8 @@ import 'package:portfolio/controller/App_Controller.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:portfolio/util/theme/App_Colors.dart';
 
+import '../../util/config/Font_Sizes.dart';
+
 class QuickNavigationCards extends StatelessWidget {
   final Function(int)? onCardTap;
 
@@ -116,7 +118,8 @@ class _MobileQuickNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     final constants = AppConstants.of(context);
     final theme = Theme.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: constants.horizontalPadding(context),
@@ -131,6 +134,7 @@ class _MobileQuickNavigation extends StatelessWidget {
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w700,
               color: theme.colorScheme.onSurface,
+              fontSize: fontSizes.titleLarge(context)
             ),
           ),
 
@@ -219,7 +223,8 @@ class _MobileNavItemState extends State<_MobileNavItem> {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
     final itemColor = widget.color(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) {
@@ -231,7 +236,7 @@ class _MobileNavItemState extends State<_MobileNavItem> {
         duration: constants.fastAnimation,
         padding: EdgeInsets.symmetric(
           horizontal: constants.spacingS,
-          vertical: constants.spacingS,
+          vertical: constants.spacingM,
         ),
         decoration: BoxDecoration(
           color: _isPressed
@@ -247,13 +252,13 @@ class _MobileNavItemState extends State<_MobileNavItem> {
             // 아이콘
             Icon(
               widget.icon,
-              size: 24.r,
+              size: constants.iconSize(context),
               color: _isPressed
                   ? itemColor
                   : theme.colorScheme.onSurface,
             ),
 
-            SizedBox(height: constants.spacingXS),
+            SizedBox(height: constants.spacingM),
 
             // 라벨
             Text(
@@ -263,6 +268,7 @@ class _MobileNavItemState extends State<_MobileNavItem> {
                 color: _isPressed
                     ? itemColor
                     : theme.colorScheme.onSurface,
+                fontSize: fontSizes.bodySmall(context)
               ),
             ),
           ],
@@ -280,7 +286,8 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Column(
       children: [
         Text(
@@ -289,6 +296,7 @@ class _SectionTitle extends StatelessWidget {
           style: theme.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w700,
             color: theme.colorScheme.onSurface,
+            fontSize: fontSizes.headlineMedium(context)
           ),
         ),
         SizedBox(height: constants.spacingS),
@@ -297,6 +305,7 @@ class _SectionTitle extends StatelessWidget {
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            fontSize: fontSizes.bodyLarge(context)
           ),
         ),
       ],
@@ -365,6 +374,7 @@ class _QuickNavigationCardState extends State<_QuickNavigationCard>
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
     final cardColor = widget.color(context);
+    final fontSizes = FontSizes.of(context);
 
     return MouseRegion(
       onEnter: (_) => _onHoverChanged(true),
@@ -417,6 +427,7 @@ class _QuickNavigationCardState extends State<_QuickNavigationCard>
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: theme.colorScheme.onSurface,
+                    fontSize: fontSizes.titleLarge(context)
                   ),
                 ),
 
@@ -428,6 +439,7 @@ class _QuickNavigationCardState extends State<_QuickNavigationCard>
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    fontSize: fontSizes.bodyMedium(context)
                   ),
                 ),
 
@@ -480,7 +492,7 @@ class _CardIcon extends StatelessWidget {
       child: Center(
         child: Icon(
           icon,
-          size: 32.r,
+          size: constants.iconSize(context),
           color: color,
         ),
       ),

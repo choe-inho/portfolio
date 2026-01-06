@@ -11,6 +11,7 @@ import 'package:portfolio/util/helper/DateTime_Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../controller/Admin_Contoller.dart';
+import '../../util/config/Font_Sizes.dart';
 import '../admin/Admin_Login_Dialog.dart';
 import 'Project_Form_Dialog.dart';
 
@@ -286,6 +287,7 @@ class _MessageDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -323,6 +325,7 @@ class _MessageDialog extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: theme.textTheme.titleLarge?.copyWith(
+                fontSize: fontSizes.titleLarge(context),
                 fontWeight: FontWeight.w700,
                 color: isError
                     ? theme.colorScheme.error
@@ -347,6 +350,7 @@ class _MessageDialog extends StatelessWidget {
                 style: theme.textTheme.bodyMedium?.copyWith(
                   height: 1.5,
                   color: theme.colorScheme.onSurface,
+                  fontSize: fontSizes.bodyMedium(context)
                 ),
               ),
             ),
@@ -588,6 +592,7 @@ class _ProjectMetadata extends StatelessWidget {
     final volumeText = ProjectVolume.stateToText(volume);
     final periodText =
         '${DateTimeUtils.timelineToText(startDate)} - ${DateTimeUtils.timelineToText(endDate)}';
+    final fontSizes = FontSizes.of(context);
 
     return Row(
       children: [
@@ -611,7 +616,7 @@ class _ProjectMetadata extends StatelessWidget {
             style: theme.textTheme.bodySmall?.copyWith(
               color: volumeColor,
               fontWeight: FontWeight.w600,
-              fontSize: 11.sp,
+              fontSize: fontSizes.bodySmall(context),
             ),
           ),
         ),
@@ -641,7 +646,7 @@ class _ProjectMetadata extends StatelessWidget {
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
-                  fontSize: 11.sp,
+                  fontSize: fontSizes.bodySmall(context),
                 ),
               ),
             ],
@@ -660,6 +665,7 @@ class _ProjectTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Text(
       title,
@@ -668,6 +674,7 @@ class _ProjectTitle extends StatelessWidget {
       style: theme.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w700,
         color: theme.colorScheme.onSurface,
+        fontSize: fontSizes.titleLarge(context)
       ),
     );
   }
@@ -681,6 +688,7 @@ class _ProjectDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Text(
       description,
@@ -688,6 +696,7 @@ class _ProjectDescription extends StatelessWidget {
       overflow: TextOverflow.ellipsis,
       style: theme.textTheme.bodyMedium?.copyWith(
         color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+        fontSize: fontSizes.bodyMedium(context),
         height: 1.5,
       ),
     );
@@ -730,6 +739,7 @@ class _SkillTag extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -751,7 +761,7 @@ class _SkillTag extends StatelessWidget {
         style: theme.textTheme.bodySmall?.copyWith(
           color: color,
           fontWeight: FontWeight.w500,
-          fontSize: 11.sp,
+          fontSize: fontSizes.bodySmall(context)
         ),
       ),
     );
@@ -767,6 +777,7 @@ class _ViewMoreButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -782,6 +793,7 @@ class _ViewMoreButton extends StatelessWidget {
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.primary,
             fontWeight: FontWeight.w600,
+            fontSize: fontSizes.bodyMedium(context)
           ),
         ),
         SizedBox(width: constants.spacingXS),

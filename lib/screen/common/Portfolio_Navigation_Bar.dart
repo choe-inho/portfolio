@@ -5,6 +5,8 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:portfolio/controller/App_Controller.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 
+import '../../util/config/Font_Sizes.dart';
+
 class PortfolioNavigationBar extends StatelessWidget {
   final Function(int)? onItemSelected;
   final int currentIndex;
@@ -147,7 +149,8 @@ class _LogoSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -156,12 +159,13 @@ class _LogoSection extends StatelessWidget {
           height: constants.iconSize(context),
           width: constants.iconSize(context),
         ),
-        SizedBox(width: constants.spacingS),
+        SizedBox(width: constants.spacingM),
         Text(
           'ICONODING',
-          style: theme.textTheme.titleLarge?.copyWith(
+          style: theme.textTheme.displayLarge?.copyWith(
             fontWeight: FontWeight.w700,
             color: theme.colorScheme.onSurface,
+            fontSize: fontSizes.displayLarge(context)
           ),
         ),
       ],
@@ -232,7 +236,8 @@ class _NavigationMenuItemState extends State<_NavigationMenuItem> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -256,6 +261,7 @@ class _NavigationMenuItemState extends State<_NavigationMenuItem> {
           child: Text(
             widget.label,
             style: theme.textTheme.bodyLarge?.copyWith(
+              fontSize: fontSizes.bodyLarge(context), 
               fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.w500,
               color: widget.isSelected
                   ? theme.colorScheme.primary
@@ -400,7 +406,8 @@ class _DrawerHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Container(
       padding: EdgeInsets.all(constants.spacingL),
       decoration: BoxDecoration(
@@ -415,13 +422,14 @@ class _DrawerHeader extends StatelessWidget {
         children: [
           Image.asset(
             'assets/icon/icon_only_logo.png',
-            height: 32.r,
-            width: 32.r,
+            height: constants.largeIconSize(context),
+            width: constants.largeIconSize(context)
           ),
           SizedBox(width: constants.spacingM),
           Text(
             'ICONODING',
             style: theme.textTheme.titleLarge?.copyWith(
+              fontSize: fontSizes.titleLarge(context),
               fontWeight: FontWeight.w700,
               color: theme.colorScheme.onSurface,
             ),
@@ -450,7 +458,8 @@ class _DrawerMenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Padding(
       padding: EdgeInsets.only(bottom: constants.spacingS),
       child: InkWell(
@@ -480,6 +489,7 @@ class _DrawerMenuItem extends StatelessWidget {
               Text(
                 label,
                 style: theme.textTheme.bodyLarge?.copyWith(
+                  fontSize: fontSizes.bodyLarge(context),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected
                       ? theme.colorScheme.primary
@@ -502,7 +512,8 @@ class _DrawerFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return Container(
       padding: EdgeInsets.all(constants.spacingL),
       decoration: BoxDecoration(
@@ -513,23 +524,41 @@ class _DrawerFooter extends StatelessWidget {
           ),
         ),
       ),
-      child: Column(
-        children: [
-          Text(
-            '© 2025 Portfolio',
+      child: RichText(
+        text: TextSpan(
+            text: '${DateTime.now().year} ',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                fontSize: fontSizes.bodySmall(context)
             ),
-          ),
-          SizedBox(height: constants.spacingXS),
-          Text(
-            'Made with Flutter 💚',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-          ),
-        ],
-      ),
+            children: [
+              TextSpan(
+                  text: 'iconoding',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontSize: fontSizes.bodySmall(context)
+                  )),
+              TextSpan(
+                  text: ' Portfolio ',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      fontSize: fontSizes.bodySmall(context)
+                  )),
+              TextSpan(
+                  text: '/\n Developed by ',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      fontSize: fontSizes.bodySmall(context)
+                  )),
+              TextSpan(
+                  text: 'FLUTTER',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontSize: fontSizes.bodySmall(context)
+                  )),
+            ]
+        ),
+      )
     );
   }
 }

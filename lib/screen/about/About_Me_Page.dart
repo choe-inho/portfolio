@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:portfolio/controller/About_Me_Controller.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 import '../../util/animation/Portfolio_Indicator.dart';
+import '../../util/config/Font_Sizes.dart';
 import '../../util/route/App_Routes.dart';
 import '../common/Portfoil_Footer.dart';
 import '../common/Portfolio_Navigation_Bar.dart' as nav;
@@ -151,6 +152,7 @@ class _LoadingState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Center(
       child: Column(
@@ -168,6 +170,7 @@ class _LoadingState extends StatelessWidget {
             '프로필을 불러오는 중...',
             style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              fontSize: fontSizes.bodyLarge(context)
             ),
           ),
         ],
@@ -186,6 +189,7 @@ class _ErrorState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Center(
       child: Padding(
@@ -215,6 +219,7 @@ class _ErrorState extends StatelessWidget {
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: theme.colorScheme.onSurface,
+                fontSize: fontSizes.titleLarge(context)
               ),
             ),
 
@@ -224,6 +229,7 @@ class _ErrorState extends StatelessWidget {
               '잠시 후 다시 시도해주세요',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                fontSize: fontSizes.bodyMedium(context)
               ),
             ),
 

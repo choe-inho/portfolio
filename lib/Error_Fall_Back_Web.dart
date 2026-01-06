@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:portfolio/util/config//App_Constants.dart';
+import 'package:portfolio/util/config/Font_Sizes.dart';
 import 'package:portfolio/util/theme/App_Theme.dart';
 
 class ErrorFallBackWeb extends StatelessWidget {
@@ -11,6 +12,8 @@ class ErrorFallBackWeb extends StatelessWidget {
   Widget build(BuildContext context) {
     final con = AppConstants.of(context);
     final theme = Theme.of(context);
+    final fontSizes = FontSizes.of(context);
+    
     return ScreenUtilInit(
         designSize: Size(1368, 738),
         builder: (context, child) {
@@ -29,7 +32,9 @@ class ErrorFallBackWeb extends StatelessWidget {
                       child: Image.asset(con.errorFallBack(context)),
                     ),
                     SizedBox(height: 40.h,),
-                    Text('올바르지 않은 페이지 경로입니다', style: theme.textTheme.headlineMedium,),
+                    Text('올바르지 않은 페이지 경로입니다', style: theme.textTheme.headlineMedium?.copyWith(
+                      fontSize: fontSizes.headlineMedium(context)
+                    ),),
                     SizedBox(height: 40.h,),
                   ],
                 ),

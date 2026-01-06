@@ -6,6 +6,8 @@ import 'package:portfolio/controller/About_Me_Controller.dart';
 import 'package:portfolio/controller/App_Controller.dart';
 import 'package:portfolio/util/animation/Portfolio_Indicator.dart';
 
+import '../../util/config/Font_Sizes.dart';
+
 /// Hero 섹션 프로필 이미지
 /// AboutMeController에서 프로필 이미지를 가져와 표시합니다.
 /// - 무한 로딩 해결: Get.find로 기존 컨트롤러 사용
@@ -20,8 +22,8 @@ class HeroImage extends StatelessWidget {
     final appController = Get.find<AppController>();
 
     final imageSize = appController.responsive(
-      mobile: 200.r,
-      tablet: 280.r,
+      mobile: 350.r,
+      tablet: 350.r,
       web: 350.r,
     );
 
@@ -175,6 +177,7 @@ class _ErrorPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Container(
       width: size,
@@ -197,6 +200,7 @@ class _ErrorPlaceholder extends StatelessWidget {
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.error,
               fontWeight: FontWeight.w600,
+              fontSize: fontSizes.bodySmall(context)
             ),
           ),
         ],

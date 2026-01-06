@@ -7,6 +7,8 @@ import 'package:portfolio/controller/Projects_Controller.dart';
 import 'package:portfolio/model/Project.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 
+import '../../util/config/Font_Sizes.dart';
+
 class ProjectsFilterSection extends StatelessWidget {
   const ProjectsFilterSection({super.key});
 
@@ -131,7 +133,8 @@ class _FilterButtonState extends State<_FilterButton> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
-
+    final fontSizes = FontSizes.of(context);
+    
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -187,6 +190,7 @@ class _FilterButtonState extends State<_FilterButton> {
               Text(
                 widget.label,
                 style: theme.textTheme.bodyMedium?.copyWith(
+                  fontSize: fontSizes.bodyMedium(context),
                   fontWeight:
                   widget.isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: widget.isSelected
@@ -215,7 +219,7 @@ class _FilterButtonState extends State<_FilterButton> {
                   '${widget.count}',
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    fontSize: 11.sp,
+                    fontSize: fontSizes.bodySmall(context),
                     color: widget.isSelected
                         ? theme.colorScheme.onPrimary
                         : theme.colorScheme.onSurfaceVariant,

@@ -10,6 +10,8 @@ import 'package:portfolio/service/Image_Upload_Service.dart';
 import 'package:portfolio/util/config/App_Constants.dart';
 import 'package:portfolio/util/animation/Portfolio_Indicator.dart';
 
+import '../../util/config/Font_Sizes.dart';
+
 class ProjectFormDialog extends StatefulWidget {
   final Project? project; // null이면 추가 모드, 있으면 수정 모드
 
@@ -342,6 +344,8 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
 
   /// 헤더
   Widget _buildHeader(ThemeData theme, AppConstants constants) {
+    final fontSizes = FontSizes.of(context);
+
     return Container(
       padding: EdgeInsets.all(constants.spacingL),
       decoration: BoxDecoration(
@@ -364,6 +368,7 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w700,
               color: theme.colorScheme.primary,
+              fontSize: fontSizes.titleLarge(context)
             ),
           ),
           const Spacer(),
@@ -381,6 +386,8 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
 
   /// 썸네일 섹션
   Widget _buildThumbnailSection(ThemeData theme, AppConstants constants) {
+    final fontSizes = FontSizes.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -396,6 +403,7 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
               '썸네일 이미지 *',
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
+                fontSize: fontSizes.titleMedium(context)
               ),
             ),
           ],
@@ -407,6 +415,7 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
               '• 지원 형식: ${ImageUploadService.allowedFormatsText}',
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            fontSize: fontSizes.bodySmall(context)
           ),
         ),
         SizedBox(height: constants.spacingM),
@@ -421,6 +430,8 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
 
   /// 이미지 미리보기
   Widget _buildImagePreview(ThemeData theme, AppConstants constants) {
+    final fontSizes = FontSizes.of(context);
+
     return Stack(
       children: [
         Container(
@@ -483,6 +494,7 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
+                  fontSize: fontSizes.bodySmall(context)
                 ),
               ),
             ),
@@ -521,6 +533,8 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
 
   /// 업로드 버튼
   Widget _buildUploadButton(ThemeData theme, AppConstants constants) {
+    final fontSizes = FontSizes.of(context);
+
     return InkWell(
       onTap: _selectImage,
       borderRadius: BorderRadius.circular(constants.borderRadius(context)),
@@ -550,6 +564,7 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
               style: theme.textTheme.titleMedium?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.w600,
+                fontSize: fontSizes.titleMedium(context)
               ),
             ),
             SizedBox(height: constants.spacingS),
@@ -557,6 +572,7 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
               '클릭하여 이미지를 선택하세요',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                fontSize: fontSizes.bodySmall(context)
               ),
             ),
           ],
@@ -567,6 +583,8 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
 
   /// Notion URL 또는 메시지 필드 (수정됨!)
   Widget _buildNotionField(ThemeData theme, AppConstants constants) {
+    final fontSizes = FontSizes.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -582,6 +600,7 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
               'Notion URL 또는 안내 메시지',
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
+                fontSize: fontSizes.titleSmall(context)
               ),
             ),
           ],
@@ -629,6 +648,7 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     height: 1.4,
+                    fontSize: fontSizes.bodySmall(context)
                   ),
                 ),
               ),
@@ -650,6 +670,7 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
   }) {
     final theme = Theme.of(context);
     final constants = AppConstants.of(context);
+    final fontSizes = FontSizes.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -666,6 +687,7 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
               label,
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
+                fontSize: fontSizes.titleSmall(context)
               ),
             ),
           ],
@@ -688,6 +710,8 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
 
   /// 프로젝트 타입 선택
   Widget _buildVolumeSelector(ThemeData theme, AppConstants constants) {
+    final fontSizes = FontSizes.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -703,6 +727,7 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
               '프로젝트 타입',
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
+                fontSize: fontSizes.titleSmall(context)
               ),
             ),
           ],
@@ -766,6 +791,8 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final fontSizes = FontSizes.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -781,6 +808,7 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
               label,
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
+                fontSize: fontSizes.titleSmall(context)
               ),
             ),
           ],
@@ -803,7 +831,9 @@ class _ProjectFormDialogState extends State<ProjectFormDialog> {
               children: [
                 Text(
                   '${date.year}.${date.month.toString().padLeft(2, '0')}',
-                  style: theme.textTheme.bodyLarge,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontSize: fontSizes.bodyLarge(context)
+                  ),
                 ),
                 Icon(
                   LucideIcons.chevronDown,
