@@ -55,13 +55,18 @@ class _PageScaffoldState extends State<PageScaffold> {
   }
 }
 
-/// Soft radial glow that follows the pointer, fixed to the viewport (not the
-/// scroll content) — the "cursor tracking" spotlight effect.
+/// Small, tight glow that follows the pointer, fixed to the viewport (not
+/// the scroll content) — the "cursor tracking" spotlight effect.
+///
+/// This needs to stay a focused spotlight: a wide, low-alpha color spread
+/// across most of the viewport just averages out to a gray wash instead of
+/// reading as a colored glow, so keep the diameter small and let it fall
+/// off sharply.
 class _CursorGlow extends StatelessWidget {
   const _CursorGlow({required this.position});
 
   final Offset position;
-  static const double _size = 480;
+  static const double _size = 200;
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +80,10 @@ class _CursorGlow extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: RadialGradient(
+              stops: const [0.0, 0.4, 1.0],
               colors: [
-                AppColors.emerald.withValues(alpha: 0.14),
+                AppColors.emerald.withValues(alpha: 0.35),
+                AppColors.emerald.withValues(alpha: 0.12),
                 AppColors.emerald.withValues(alpha: 0),
               ],
             ),
