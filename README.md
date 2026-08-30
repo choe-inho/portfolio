@@ -89,6 +89,7 @@ lib/
 
 - **Git Pages** 사용
 - 로컬 빌드 후 배포
+- Git Action을 이용한 웹 업데이트 자동화 push -> 자동 빌드
 
 ### 🤔 Trouble Shooting
 
@@ -97,3 +98,5 @@ lib/
   - 이미지 cachedNetwork 라이브러리를 통한 최적화
 - Firestore 읽기 비용
   - 일회성 fetch 적용
+- ScreenUtil의 한계 -> 모바일 최적화가 안됨
+  - context를 이용한 강제 최적화

@@ -9,6 +9,13 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    # Archived GetX implementation kept only as a reference while porting to
+    # Riverpod — it depends on packages no longer in pubspec.yaml (get,
+    # flutter_screenutil, lucide_icons) and is never built.
+    - lib_legacy/**
+
 linter:
   # The lint rules applied to this project can be customized in the
   # section below to disable rules from the `package:flutter_lints/flutter.yaml`

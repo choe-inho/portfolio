@@ -11,24 +11,46 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
-    
+      uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: home/package-lock.json
+
+    - name: Install landing dependencies
+      working-directory: home
+      run: npm ci
+
+    - name: Build landing (Vue SSG)
+      working-directory: home
+      run: npm run build
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         channel: 'stable'
-    
-    - name: Install dependencies
+
+    - name: Install Flutter dependencies
       run: flutter pub get
-    
-    - name: Build web
-      run: flutter build web --release --base-href "/portfolio/"
-    
+
+    - name: Build Flutter web
+      run: flutter build web --release --base-href "/portfolio/app/"
+
+    - name: Assemble combined site
+      run: |
+        mkdir -p public/app
+        cp -r home/dist/. public/
+        cp -r build/web/. public/app/
+        touch public/.nojekyll
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build/web
+        publish_dir: ./public

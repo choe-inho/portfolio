@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: #050505;
+  color: #f5f5f7;
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  overscroll-behavior-y: none;
+}
+
+::selection {
+  background: rgba(16, 185, 129, 0.35);
+}
+
+@keyframes drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, 50px) scale(1.12); }
+}
+
+@keyframes drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-50px, 40px) scale(1.08); }
+}
+
+@keyframes drift-c {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -45px) scale(1.15); }
+}
+
+.orb-drift-a {
+  animation: drift-a 16s ease-in-out infinite;
+}
+
+.orb-drift-b {
+  animation: drift-b 20s ease-in-out infinite;
+}
+
+.orb-drift-c {
+  animation: drift-c 18s ease-in-out infinite;
+}
+
+@keyframes cta-pulse {
+  0%, 100% {
+    box-shadow: 0 0 18px 0 rgba(16, 185, 129, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 32px 4px rgba(16, 185, 129, 0.4);
+  }
+}
+
+.cta-pulse {
+  animation: cta-pulse 2.2s ease-in-out infinite;
+}
